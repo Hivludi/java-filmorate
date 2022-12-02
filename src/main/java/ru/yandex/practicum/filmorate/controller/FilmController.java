@@ -1,14 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +18,7 @@ public class FilmController {
     private int idGenerator = 1;
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
-        if (!FilmValidator.isValid(film)) {
-            log.warn("Ошибка валидации");
-            throw new ValidationException("Ошибка валидации");
-        }
+    public Film create(@Validated @RequestBody Film film) {
         film.setId(idGenerator);
         idGenerator++;
         films.put(film.getId(), film);
@@ -35,11 +27,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
-        if (!FilmValidator.isValid(film)) {
-            log.warn("Ошибка валидации");
-            throw new ValidationException("Ошибка валидации");
-        }
+    public Film update(@Validated @RequestBody Film film) {
         if (!films.containsKey(film.getId())) throw new RuntimeException("Фильм не существует");
         films.put(film.getId(), film);
         log.info("Обновлен фильм: {}", film);

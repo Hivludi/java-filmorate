@@ -1,13 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +18,7 @@ public class UserController {
     private int idGenerator = 1;
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        if (!UserValidator.isValid(user)) {
-            log.warn("Ошибка валидации");
-            throw new ValidationException("Ошибка валидации");
-        }
+    public User create(@Validated @RequestBody User user) {
         user.setId(idGenerator);
         idGenerator++;
         if (user.getName() == null || user.getName().isBlank()) user.setName(user.getLogin());
@@ -35,11 +28,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
-        if (!UserValidator.isValid(user)) {
-            log.warn("Ошибка валидации");
-            throw new ValidationException("Ошибка валидации");
-        }
+    public User update(@Validated @RequestBody User user) {
         if (!users.containsKey(user.getId())) throw new RuntimeException("Фильм не существует");
         users.put(user.getId(), user);
         log.info("Обновлен пользователь: {}", user);
