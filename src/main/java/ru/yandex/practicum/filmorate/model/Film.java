@@ -8,18 +8,22 @@ import ru.yandex.practicum.filmorate.annotations.NotBeforeCinemaInvented;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Film {
-    private int id;
-    @NotBlank(message = "Name cannot be blank")
+    private long id;
+    @NotBlank(message = "Имя не может быть пустым")
     private final String name;
-    @Size(message = "Description should not exceed 200 characters", max = 200)
+    @Size(message = "Описание фильма не должно превышать 200 символов", max = 200)
     private final String description;
     @NotBeforeCinemaInvented
     private final LocalDate releaseDate;
-    @Min(message = "Duration cannot be lower than 0", value = 0)
+    @Min(message = "Длительность фильма не может быть меньше 0", value = 0)
     private final int duration;
+    private final Set<Long> likes = new HashSet<>();
 }
