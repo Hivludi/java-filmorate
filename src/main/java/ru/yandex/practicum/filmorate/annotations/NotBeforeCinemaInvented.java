@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.annotations;
 
-import ru.yandex.practicum.filmorate.validator.NotBeforeCinemaInventedValidator;
+import ru.yandex.practicum.filmorate.service.validator.NotBeforeCinemaInventedValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = NotBeforeCinemaInventedValidator.class)
 public @interface NotBeforeCinemaInvented {
-    String message() default "Film release date cannot be before cinema is invented";
+    String message() default "Дата релиза фильма не может быть раньше даты изобретения кино";
 
     Class<?>[] groups() default {};
 

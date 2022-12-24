@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.validator;
+package ru.yandex.practicum.filmorate.service.validator;
 
 import ru.yandex.practicum.filmorate.annotations.NotBeforeCinemaInvented;
 
