@@ -3,12 +3,10 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 import ru.yandex.practicum.filmorate.annotations.NotBeforeCinemaInvented;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

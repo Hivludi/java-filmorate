@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmAlreadyLikedException;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Data
 public class FilmService {
 
     private final FilmStorage filmStorage;
@@ -37,5 +35,9 @@ public class FilmService {
                 .sorted(Comparator.comparingInt(f0 -> f0.getLikes().size() * -1))
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    public FilmStorage getFilmStorage() {
+        return filmStorage;
     }
 }

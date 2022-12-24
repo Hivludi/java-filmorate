@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,28 +53,27 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-}
+    private static class ErrorResponse {
+        String error;
 
-class ErrorResponse {
-    String error;
+        public ErrorResponse(String error) {
+            this.error = error;
+        }
 
-    public ErrorResponse(String error) {
-        this.error = error;
+        public String getError() {
+            return error;
+        }
     }
 
-    public String getError() {
-        return error;
-    }
-}
+    private static class MultipleErrorsResponse {
+        List<String> errorsList;
 
-class MultipleErrorsResponse {
-    List<String> errorsList;
+        public MultipleErrorsResponse(List<String> errorsList) {
+            this.errorsList = errorsList;
+        }
 
-    public MultipleErrorsResponse(List<String> errorsList) {
-        this.errorsList = errorsList;
-    }
-
-    public List<String> getErrorsList() {
-        return errorsList;
+        public List<String> getErrorsList() {
+            return errorsList;
+        }
     }
 }

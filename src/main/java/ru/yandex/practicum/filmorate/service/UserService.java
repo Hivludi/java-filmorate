@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserAlreadyFriendedException;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Data
 public class UserService {
 
     private final UserStorage userStorage;
@@ -51,5 +49,9 @@ public class UserService {
         return friendIds.stream()
                 .map(userStorage::findUserById)
                 .collect(Collectors.toList());
+    }
+
+    public UserStorage getUserStorage() {
+        return userStorage;
     }
 }
