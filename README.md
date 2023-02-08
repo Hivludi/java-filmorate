@@ -1,3 +1,2 @@
 # java-filmorate
-Template repository for Filmorate project.
-![](https://app.quickdatabasediagrams.com/#/d/3Hn7wu)
+<img width="682" src="https://github.com/Hivludi/java-filmorate/blob/5656933e3036c10f07f612529685310e68800d1d/FilmorateERD.png">
