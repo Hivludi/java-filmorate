@@ -1,5 +1,5 @@
 # java-filmorate
-<img width="800" src="https://github.com/Hivludi/java-filmorate/blob/00a5aa04dbfd5e2e6be732e31bfb56d272e0745a/Filmorate%20ERD%20v2.jpg">
+<img width="1000" src="Filmorate ERD v3.jpg">
 
 ## Примеры запросов:
 ### Получить конкретного пользователя
