@@ -35,8 +35,7 @@ public class ErrorHandler {
         return new ErrorResponse(String.format("Ошибка с полем \"%s\": %s", e.getParameter(), e.getMessage()));
     }
 
-    @ExceptionHandler({FilmNotFoundException.class,
-            UserNotFoundException.class,
+    @ExceptionHandler({ObjectNotFoundException.class,
             LikeNotFoundException.class,
             FriendNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)

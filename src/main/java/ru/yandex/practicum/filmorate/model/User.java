@@ -7,14 +7,15 @@ import ru.yandex.practicum.filmorate.annotations.DateInThePast;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class User {
-    private long id;
+    private int id;
     @NotNull(message = "У пользователя должна быть электронная почта")
     @Email(message = "Электронная почта невалидна")
     private final String email;
@@ -24,5 +25,15 @@ public class User {
     private String name;
     @DateInThePast
     private final LocalDate birthday;
-    private final Set<Long> friends = new HashSet<>();
+    private final Set<Integer> friends;
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("EMAIL", email);
+        values.put("LOGIN", login);
+        if (name == null || name.isBlank()) values.put("NAME", login);
+        else values.put("NAME", name);
+        values.put("BIRTHDAY", birthday);
+        return values;
+    }
 }
