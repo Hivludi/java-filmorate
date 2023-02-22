@@ -10,6 +10,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
@@ -56,6 +57,7 @@ class FilmorateApplicationTests {
 				.description("desc1")
 				.releaseDate(LocalDate.parse("1996-09-11"))
 				.duration(120)
+				.mpa(new Mpa(1, "G"))
 				.build();
 
 		Film film2 = Film.builder()
@@ -63,6 +65,7 @@ class FilmorateApplicationTests {
 				.description("desc2")
 				.releaseDate(LocalDate.parse("1998-09-11"))
 				.duration(130)
+				.mpa(new Mpa(1, "G"))
 				.build();
 
 		filmStorage.create(film1);
@@ -149,6 +152,7 @@ class FilmorateApplicationTests {
 				.description("desc4")
 				.releaseDate(LocalDate.parse("1991-09-11"))
 				.duration(160)
+				.mpa(new Mpa(2, "PG"))
 				.build();
 
 		Optional<Film> filmOptional = filmStorage.update(film1);
