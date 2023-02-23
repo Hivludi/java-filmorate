@@ -29,7 +29,7 @@ public class UserDbStorage implements UserStorage {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("USERS")
                 .usingGeneratedKeyColumns("USER_ID");
-        int userId = simpleJdbcInsert.executeAndReturnKey(user.toMap()).intValue();
+        int userId = simpleJdbcInsert.executeAndReturnKey(toMap(user)).intValue();
 
         if (user.getFriends() != null && !user.getFriends().isEmpty()) {
             String sql = "insert into FRIENDS_LIST (USER_ID, FRIEND_ID) VALUES (?,?)";
@@ -146,5 +146,15 @@ public class UserDbStorage implements UserStorage {
     private Set<Integer> getFriends(int userId) {
         String sql = "select FRIEND_ID from FRIENDS_LIST where USER_ID = ?";
         return new HashSet<>(jdbcTemplate.queryForList(sql, Integer.class, userId));
+    }
+
+    private Map<String, Object> toMap(User user) {
+        Map<String, Object> values = new HashMap<>();
+        values.put("EMAIL", user.getEmail());
+        values.put("LOGIN", user.getLogin());
+        if (user.getName() == null || user.getName().isBlank()) values.put("NAME", user.getLogin());
+        else values.put("NAME", user.getName());
+        values.put("BIRTHDAY", user.getBirthday());
+        return values;
     }
 }

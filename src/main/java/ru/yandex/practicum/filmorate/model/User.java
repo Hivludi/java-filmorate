@@ -26,14 +26,4 @@ public class User {
     @DateInThePast
     private final LocalDate birthday;
     private final Set<Integer> friends;
-
-    public Map<String, Object> toMap() {
-        Map<String, Object> values = new HashMap<>();
-        values.put("EMAIL", email);
-        values.put("LOGIN", login);
-        if (name == null || name.isBlank()) values.put("NAME", login);
-        else values.put("NAME", name);
-        values.put("BIRTHDAY", birthday);
-        return values;
-    }
 }

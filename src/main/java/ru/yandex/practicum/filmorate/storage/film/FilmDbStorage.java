@@ -36,7 +36,7 @@ public class FilmDbStorage implements FilmStorage {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
                 .usingGeneratedKeyColumns("FILM_ID");
-        int filmId = simpleJdbcInsert.executeAndReturnKey(film.toMap()).intValue();
+        int filmId = simpleJdbcInsert.executeAndReturnKey(toMap(film)).intValue();
         if (film.getMpa() != null) {
             String sql = "update FILMS set MPA_ID = ? where FILM_ID = ?";
             jdbcTemplate.update(sql, film.getMpa().getId(), filmId);
@@ -163,5 +163,14 @@ public class FilmDbStorage implements FilmStorage {
     private Set<Integer> getLikes(int filmId) {
         String sql = "select USER_ID from FILM_LIKES where FILM_ID = ?";
         return new HashSet<>(jdbcTemplate.queryForList(sql, Integer.class, filmId));
+    }
+
+    private Map<String, Object> toMap(Film film) {
+        Map<String, Object> values = new HashMap<>();
+        values.put("NAME", film.getName());
+        values.put("DESCRIPTION", film.getDescription());
+        values.put("RELEASE_DATE", film.getReleaseDate());
+        values.put("DURATION", film.getDuration());
+        return values;
     }
 }
