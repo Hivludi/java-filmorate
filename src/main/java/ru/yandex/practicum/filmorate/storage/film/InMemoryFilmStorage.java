@@ -2,35 +2,36 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.FilmAlreadyLikedException;
+import ru.yandex.practicum.filmorate.exceptions.LikeNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Component
+@Component("FilmInMemory")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private final Map<Long, Film> films = new HashMap<>();
-    private long idGenerator = 1;
+    private final Map<Integer, Film> films = new HashMap<>();
+    private int idGenerator = 1;
 
     @Override
-    public Film create(Film film) {
+    public Optional<Film> create(Film film) {
         film.setId(idGenerator);
         idGenerator++;
         films.put(film.getId(), film);
         log.info("Добавлен фильм: {}", film);
-        return film;
+        return Optional.of(film);
     }
 
     @Override
-    public Film update(Film film) {
-        if (!films.containsKey(film.getId())) throw new FilmNotFoundException("Фильм не существует");
+    public Optional<Film> update(Film film) {
+        if (!films.containsKey(film.getId())) throw new ObjectNotFoundException("Фильм не существует");
         films.put(film.getId(), film);
         log.info("Обновлен фильм: {}", film);
-        return film;
+        return Optional.of(film);
     }
 
     @Override
@@ -39,8 +40,32 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film findFilmById(long id) {
-        if (films.get(id) == null) throw new FilmNotFoundException("Фильм не существует");
-        return films.get(id);
+    public Optional<Film> findFilmById(int id) {
+        if (films.get(id) == null) throw new ObjectNotFoundException("Фильм не существует");
+        return Optional.of(films.get(id));
+    }
+
+    @Override
+    public Optional<Film> addLike(int userId, int filmId) {
+        Set<Integer> filmLikes = findFilmById(filmId).get().getLikes();
+        if (filmLikes.contains(userId)) throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
+        filmLikes.add(userId);
+        return findFilmById(filmId);
+    }
+
+    @Override
+    public Optional<Film> removeLike(int userId, int filmId) {
+        Set<Integer> filmLikes = findFilmById(filmId).get().getLikes();
+        if (!filmLikes.contains(userId)) throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
+        filmLikes.remove(userId);
+        return findFilmById(filmId);
+    }
+
+    @Override
+    public List<Film> showMostPopularFilms(Integer count) {
+        return findAll().stream()
+                .sorted(Comparator.comparingInt(f0 -> f0.getLikes().size() * -1))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

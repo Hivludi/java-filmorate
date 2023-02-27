@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,33 +19,33 @@ public class FilmController {
     private final FilmService filmService;
 
     @PostMapping
-    public Film create(@Validated @RequestBody Film film) {
-        return filmService.getFilmStorage().create(film);
+    public Optional<Film> create(@Validated @RequestBody Film film) {
+        return filmService.create(film);
     }
 
     @PutMapping
-    public Film update(@Validated @RequestBody Film film) {
-        return filmService.getFilmStorage().update(film);
+    public Optional<Film> update(@Validated @RequestBody Film film) {
+        return filmService.update(film);
     }
 
     @GetMapping
     public Collection<Film> findAll() {
-        return filmService.getFilmStorage().findAll();
+        return filmService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable(value = "id") Long filmId) {
-        return filmService.getFilmStorage().findFilmById(filmId);
+    public Optional<Film> getFilmById(@PathVariable(value = "id") Integer filmId) {
+        return filmService.findFilmById(filmId);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable(value = "id") Long filmId, @PathVariable Long userId) {
-        filmService.addLike(userId, filmId);
+    public Optional<Film> addLike(@PathVariable(value = "id") Integer filmId, @PathVariable Integer userId) {
+        return filmService.addLike(userId, filmId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void removeLike(@PathVariable(value = "id") Long filmId, @PathVariable Long userId) {
-        filmService.removeLike(userId, filmId);
+    public Optional<Film> removeLike(@PathVariable(value = "id") Integer filmId, @PathVariable Integer userId) {
+        return filmService.removeLike(userId, filmId);
     }
 
     @GetMapping("/popular")
