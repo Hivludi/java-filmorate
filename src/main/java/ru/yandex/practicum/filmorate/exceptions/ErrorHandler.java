@@ -28,6 +28,12 @@ public class ErrorHandler {
         return new MultipleErrorsResponse(list);
     }
 
+    @ExceptionHandler(ReviewLikeAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleReviewLikeAlreadyExistException(ReviewLikeAlreadyExistException e) {
+        return new ErrorResponse("Review like уже существует: " + e.getMessage());
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final IncorrectParameterException e) {
