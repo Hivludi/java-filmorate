@@ -120,9 +120,21 @@ create table IF NOT EXISTS REVIEW_LIKES
         foreign key (REVIEW_ID) references REVIEWS on delete cascade
 );
 
+create table IF NOT EXISTS EVENTS
+(
+    TIMESTAMP LONG,
+    USER_ID INTEGER not null REFERENCES USERS(USER_ID) ON DELETE CASCADE,
+    EVENT_TYPE CHARACTER VARYING(6) not null,
+    OPERATION CHARACTER VARYING(6) not null,
+    EVENT_ID INTEGER auto_increment,
+    ENTITY_ID INTEGER not null
+);
+
  alter table FILMS alter column FILM_ID restart with 1;
  alter table GENRES alter column GENRE_ID restart with 1;
  alter table MPA alter column MPA_ID restart with 1;
  alter table USERS alter column USER_ID restart with 1;
  alter table REVIEWS alter column REVIEW_ID restart with 1;
+ alter table EVENTS alter column EVENT_ID restart with 1;
+
  alter table DIRECTORS alter column DIRECTOR_ID restart with 1;

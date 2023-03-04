@@ -11,16 +11,21 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final FeedService feedService;
 
-    public FilmService (@Qualifier("FilmDB") FilmStorage filmStorage) {
+    public FilmService (@Qualifier("FilmDB") FilmStorage filmStorage, FeedService feedService) {
         this.filmStorage = filmStorage;
+        this.feedService = feedService;
     }
 
     public Optional<Film> addLike(int userId, int filmId) {
+        feedService.addFeedEvent("LIKE", "ADD", userId, filmId);
         return filmStorage.addLike(userId, filmId);
     }
 
     public Optional<Film> removeLike(int userId, int filmId) {
+        filmStorage.removeLike(userId, filmId);
+        feedService.addFeedEvent("LIKE", "REMOVE", userId, filmId);
         return filmStorage.removeLike(userId, filmId);
     }
 
