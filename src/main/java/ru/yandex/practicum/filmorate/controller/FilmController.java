@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import java.time.Year;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -49,8 +50,12 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> findMostPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
+    public List<Film> findMostPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
+                                           @RequestParam Optional<Integer> genreId,
+                                           @RequestParam Optional<Integer> year) {
         if (count < 0) throw new IncorrectParameterException("Количество искомых фильмов не может быть отрицательным", "count");
-        return filmService.showMostPopularFilms(count);
+        if (genreId.isPresent() && genreId.get() < 0) throw new IncorrectParameterException("Идентификатор жанра не может быть отрицательным", "genreId");
+        if (year.isPresent() && (year.get() < 1895 || year.get() > Integer.parseInt(String.valueOf(Year.now())))) throw new IncorrectParameterException(String.format("Год должен быть в пределах: %s-%s", 1895, Integer.parseInt(String.valueOf(Year.now()))), "year");
+        return filmService.showMostPopularFilms(count, genreId, year);
     }
 }

@@ -23,8 +23,8 @@ public class FilmService {
         return filmStorage.removeLike(userId, filmId);
     }
 
-    public List<Film> showMostPopularFilms(Integer count) {
-        return filmStorage.showMostPopularFilms(count);
+    public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
+        return filmStorage.showMostPopularFilms(count, genreId, year);
     }
 
     public Optional<Film> create(Film film) {

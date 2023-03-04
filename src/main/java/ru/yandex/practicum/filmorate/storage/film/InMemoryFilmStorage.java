@@ -62,9 +62,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> showMostPopularFilms(Integer count) {
-        return findAll().stream()
+    public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
+        List<Film> mostPopularFilms = new ArrayList<>();
+        findAll().stream()
                 .sorted(Comparator.comparingInt(f0 -> f0.getLikes().size() * -1))
+                .forEach(f0 -> {
+                    if (genreId.isPresent() && year.isPresent()) {
+                        if (f0.getGenres().contains(genreId) && f0.getReleaseDate().getYear() == year.get()) mostPopularFilms.add(f0);
+                    } else if (genreId.isPresent()) {
+                        if (f0.getGenres().contains(genreId)) mostPopularFilms.add(f0);
+                    } else if (year.isPresent()) {
+                        if (f0.getReleaseDate().getYear() == year.get()) mostPopularFilms.add(f0);
+                    } else {
+                        mostPopularFilms.add(f0);
+                    }
+                });
+        return mostPopularFilms.stream()
                 .limit(count)
                 .collect(Collectors.toList());
     }
