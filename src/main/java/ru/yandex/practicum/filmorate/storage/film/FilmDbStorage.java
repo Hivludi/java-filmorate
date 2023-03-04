@@ -146,7 +146,14 @@ public class FilmDbStorage implements FilmStorage {
                 .map(this::findFilmById)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-        if (mostPopularFilms.isEmpty()) return new ArrayList<>(findAll());
+        if (mostPopularFilms.isEmpty()) {
+            String sql = "select FILM_ID from FILMS limit ?";
+            List<Film> result = jdbcTemplate.queryForList(sql, Integer.class, count).stream()
+                    .map(this::findFilmById)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+            return result;
+        }
         return mostPopularFilms;
     }
 
