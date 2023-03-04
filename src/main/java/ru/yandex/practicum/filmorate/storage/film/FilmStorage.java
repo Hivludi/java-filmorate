@@ -20,5 +20,7 @@ public interface FilmStorage {
 
     Optional<Film> removeLike(int userId, int filmId);
 
+    void deleteFilmById(Integer filmId);
+
     List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year);
 }

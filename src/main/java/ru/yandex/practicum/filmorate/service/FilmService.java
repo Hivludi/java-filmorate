@@ -42,4 +42,8 @@ public class FilmService {
     public Collection<Film> findAll() {
         return filmStorage.findAll();
     }
+
+    public void deleteFilmById(Integer filmId) {
+        filmStorage.deleteFilmById(filmId);
+    }
 }

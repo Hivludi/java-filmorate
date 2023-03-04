@@ -58,4 +58,9 @@ public class FilmController {
         if (year.isPresent() && (year.get() < 1895 || year.get() > Integer.parseInt(String.valueOf(Year.now())))) throw new IncorrectParameterException(String.format("Год должен быть в пределах: %s-%s", 1895, Integer.parseInt(String.valueOf(Year.now()))), "year");
         return filmService.showMostPopularFilms(count, genreId, year);
     }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilmById(@PathVariable(value = "filmId") Integer filmId) {
+        filmService.deleteFilmById(filmId);
+    }
 }
