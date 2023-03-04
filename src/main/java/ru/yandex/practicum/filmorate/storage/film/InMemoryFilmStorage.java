@@ -103,21 +103,20 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> showRecommendations(Integer userId) {
-        Set<Integer> otherUsersSamePreferences = new HashSet<>();
+        Set<Integer> otherUserIds = new HashSet<>();
 
         // Все пользователи которым также нравится те фильмы за исключением пользователя, которому нужна рекомендация
         showFilmsUserLikes(userId)
                 .forEach(film ->
-                        otherUsersSamePreferences.addAll(film.getLikes()));
-        otherUsersSamePreferences.remove(userId);
+                        otherUserIds.addAll(film.getLikes()));
+        otherUserIds.remove(userId);
 
-        // Все понравившиеся фильмы, всех тех пользователей за исключением фильмов пользователя, которому нужна рекомендация
-        // отсортированные по колличеству лайков и готовый к показу
+        // Все понравившиеся фильмы, всех пользователей за исключением фильмов пользователя, которому нужна рекомендация
         return films.values().stream()
                 .parallel()
-                .collect(() -> new TreeSet<>(Comparator.comparing(film -> film.getLikes().size() * -1)),
+                .collect(HashSet::new,
                         (collection, film) ->
-                                otherUsersSamePreferences.forEach(id -> {
+                                otherUserIds.forEach(id -> {
                                     if (film.getLikes().contains(id)) {
                                         collection.add(film);
                                     }
