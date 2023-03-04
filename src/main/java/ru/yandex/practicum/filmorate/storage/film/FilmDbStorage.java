@@ -108,7 +108,8 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "select * from FILMS where FILM_ID = ?";
         Optional<Film> film = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id).stream()
                 .findAny();
-        if (film.isEmpty()) throw new ObjectNotFoundException(String.format("Фильм с идентификатором %s не найден", id));
+        if (film.isEmpty())
+            throw new ObjectNotFoundException(String.format("Фильм с идентификатором %s не найден", id));
         return film;
     }
 
@@ -121,7 +122,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> addLike(int userId, int filmId) {
         findFilmById(filmId);
-        if (getLikes(filmId).contains(userId)) throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
+        if (getLikes(filmId).contains(userId))
+            throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
         String insertLikeQuery = "insert into FILM_LIKES (FILM_ID, USER_ID) VALUES (?,?)";
         jdbcTemplate.update(insertLikeQuery, filmId, userId);
         return findFilmById(filmId);
@@ -130,7 +132,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> removeLike(int userId, int filmId) {
         findFilmById(filmId);
-        if (!getLikes(filmId).contains(userId)) throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
+        if (!getLikes(filmId).contains(userId))
+            throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
         String deleteLikeQuery = "delete from FILM_LIKES where USER_ID = ? and FILM_ID = ?";
         jdbcTemplate.update(deleteLikeQuery, userId, filmId);
         return findFilmById(filmId);
@@ -145,6 +148,55 @@ public class FilmDbStorage implements FilmStorage {
                 .collect(Collectors.toList());
         if (mostPopularFilms.isEmpty()) return new ArrayList<>(findAll());
         return mostPopularFilms;
+    }
+
+    @Override
+    public List<Film> searchFilmsByNameOrDirector(String query) {
+        String sqlQuery = "select distinct f.*, " +
+                "M.NAME, " +
+                "count(fl.FILM_ID)" +
+                "from FILMS f " +
+                "left join MPA m on f.MPA_ID = m.MPA_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                "left join FILM_DIRECTORS fd on f.FILM_ID=fd.FILM_ID " +
+                "left join DIRECTORS d on fd.DIRECTOR_ID=d.DIRECTOR_ID " +
+                "where lower(f.NAME) like ? or lower(d.NAME) like ? " +
+                "group by f.FILM_ID " +
+                "order by count(fl.FILM_ID) desc";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query, query);
+    }
+
+    @Override
+    public List<Film> searchFilmsByName(String query) {
+        String sqlQuery = "select distinct f.*, " +
+                "m.NAME, " +
+                "count(fl.FILM_ID)  " +
+                "from FILMS f " +
+                "left join MPA m on f.MPA_ID = m.MPA_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                "where lower(f.NAME) like ? " +
+                "group by f.FILM_ID " +
+                "order by count(fl.FILM_ID) desc ";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query);
+    }
+
+    @Override
+    public List<Film> searchFilmsByDirector(String query) {
+        String sqlQuery = "select distinct f.*, " +
+                "m.NAME, " +
+                "count(fl.FILM_ID)  " +
+                "from FILMS f " +
+                "left join MPA m on f.MPA_ID = m.MPA_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                "left join FILM_DIRECTORS FD on f.FILM_ID = FD.FILM_ID " +
+                "left join DIRECTORS D on D.DIRECTOR_ID = FD.DIRECTOR_ID " +
+                "where lower(d.NAME) like ? " +
+                "group by f.FILM_ID " +
+                "order by count(fl.FILM_ID) desc ";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
