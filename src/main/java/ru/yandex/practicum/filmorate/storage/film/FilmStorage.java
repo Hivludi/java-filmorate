@@ -24,4 +24,6 @@ public interface FilmStorage {
 
     void deleteFilmById(Integer filmId);
 
+    Collection<Film> showRecommendations(Integer userId);
+
 }
