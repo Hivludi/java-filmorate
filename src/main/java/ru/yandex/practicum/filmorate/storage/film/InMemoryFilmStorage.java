@@ -48,7 +48,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Optional<Film> addLike(int userId, int filmId) {
         Set<Integer> filmLikes = findFilmById(filmId).get().getLikes();
-        if (filmLikes.contains(userId)) throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
+        if (filmLikes.contains(userId))
+            throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
         filmLikes.add(userId);
         return findFilmById(filmId);
     }
@@ -56,7 +57,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Optional<Film> removeLike(int userId, int filmId) {
         Set<Integer> filmLikes = findFilmById(filmId).get().getLikes();
-        if (!filmLikes.contains(userId)) throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
+        if (!filmLikes.contains(userId))
+            throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
         filmLikes.remove(userId);
         return findFilmById(filmId);
     }
@@ -67,5 +69,15 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .sorted(Comparator.comparingInt(f0 -> f0.getLikes().size() * -1))
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteFilmById(Integer filmId) {
+        if (films.containsKey(filmId)) {
+            films.remove(filmId, films.get(filmId));
+            log.info("Фильм с id= " + filmId + " удалён");
+        } else {
+            throw new ObjectNotFoundException("Фильма с id= " + filmId + " не существует");
+        }
     }
 }

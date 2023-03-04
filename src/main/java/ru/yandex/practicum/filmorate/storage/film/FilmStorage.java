@@ -22,4 +22,6 @@ public interface FilmStorage {
 
     List<Film> showMostPopularFilms(Integer count);
 
+    void deleteFilmById(Integer filmId);
+
 }
