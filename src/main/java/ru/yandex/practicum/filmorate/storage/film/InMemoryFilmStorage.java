@@ -90,4 +90,39 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ObjectNotFoundException("Фильма с id= " + filmId + " не существует");
         }
     }
+
+    public Collection<Film> showFilmsUserLikes(Integer userId) {
+        Collection<Film> filmsUserLikes = new ArrayList<>();
+        films.forEach((integer, film) -> {
+            if (film.getLikes().contains(userId)) {
+                filmsUserLikes.add(film);
+            }
+        });
+        return filmsUserLikes;
+    }
+
+    @Override
+    public Collection<Film> showRecommendations(Integer userId) {
+        Set<Integer> otherUsersSamePreferences = new HashSet<>();
+
+        // Все пользователи которым также нравится те фильмы за исключением пользователя, которому нужна рекомендация
+        showFilmsUserLikes(userId)
+                .forEach(film ->
+                        otherUsersSamePreferences.addAll(film.getLikes()));
+        otherUsersSamePreferences.remove(userId);
+
+        // Все понравившиеся фильмы, всех тех пользователей за исключением фильмов пользователя, которому нужна рекомендация
+        // отсортированные по колличеству лайков и готовый к показу
+        return films.values().stream()
+                .parallel()
+                .collect(() -> new TreeSet<>(Comparator.comparing(film -> film.getLikes().size() * -1)),
+                        (collection, film) ->
+                                otherUsersSamePreferences.forEach(id -> {
+                                    if (film.getLikes().contains(id)) {
+                                        collection.add(film);
+                                    }
+                                }),
+                        Collection::addAll);
+    }
+
 }

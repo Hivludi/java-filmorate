@@ -187,6 +187,40 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(deleteFilmByIdQuery, filmId);
     }
 
+    @Override
+    public Collection<Film> showRecommendations(Integer userId) {
+        String filmsUserLikesSQL =
+                "SELECT f.* FROM FILMS f LEFT JOIN FILM_LIKES fl USING (FILM_ID) WHERE fl.USER_ID = ?";
+
+        String filmPreferencesOtherUsersSQL =
+                "SELECT f.* FROM FILMS f LEFT JOIN FILM_LIKES fl USING (FILM_ID) WHERE fl.USER_ID = ?"
+                        + " EXCEPT "
+                        + " SELECT f2.* FROM FILMS f2 LEFT JOIN FILM_LIKES fl USING (FILM_ID) WHERE fl.USER_ID = ?";
+
+        // Все понравившиеся фильмы пользователя, которому нужно показать рекомендации
+        List<Film> filmsIdsUserLikes = jdbcTemplate.query(filmsUserLikesSQL,
+                (rs, rowNum) -> makeFilm(rs),
+                userId);
+
+        // Все пользователи которым также нравится те фильмы за исключением пользователя, которому нужна рекомендация
+        Set<Integer> otherUsersSamePreferences = new HashSet<>();
+        filmsIdsUserLikes.forEach(film -> otherUsersSamePreferences.addAll(film.getLikes()));
+        otherUsersSamePreferences.remove(userId);
+
+        // Все понравившиеся фильмы, всех тех пользователей за исключением фильмов пользователя, которому нужна рекомендация
+        Set<Film> recomendations = new HashSet<>();
+        otherUsersSamePreferences.forEach(otherUserId ->
+                recomendations.addAll(jdbcTemplate.query(filmPreferencesOtherUsersSQL,
+                        (rs, rowNum) -> makeFilm(rs),
+                        otherUserId,
+                        userId)));
+
+        // рекомендации, отсортированные по колличеству лайков и готовый к показу
+        return recomendations.stream()
+                .sorted(Comparator.comparing(film -> film.getLikes().size() * -1))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         return Film.builder()
                 .id(rs.getInt("FILM_ID"))
