@@ -46,4 +46,8 @@ public class UserService {
     public Collection<User> findAll() {
         return userStorage.findAll();
     }
+
+    public void deleteUserById(Integer userId){
+        userStorage.deleteUserById(userId);
+    }
 }

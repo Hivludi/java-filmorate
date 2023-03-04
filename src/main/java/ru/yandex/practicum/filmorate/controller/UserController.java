@@ -54,4 +54,9 @@ public class UserController {
     public List<User> showMutualFriends(@PathVariable(value = "id") Integer userId, @PathVariable(value = "otherId") Integer user2Id) {
         return userService.showMutualFriends(userId, user2Id);
     }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable(value = "userId") Integer userId){
+        userService.deleteUserById(userId);
+    }
 }

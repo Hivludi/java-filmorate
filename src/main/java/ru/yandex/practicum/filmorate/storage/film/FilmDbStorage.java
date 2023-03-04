@@ -108,7 +108,8 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "select * from FILMS where FILM_ID = ?";
         Optional<Film> film = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), id).stream()
                 .findAny();
-        if (film.isEmpty()) throw new ObjectNotFoundException(String.format("Фильм с идентификатором %s не найден", id));
+        if (film.isEmpty())
+            throw new ObjectNotFoundException(String.format("Фильм с идентификатором %s не найден", id));
         return film;
     }
 
@@ -121,7 +122,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> addLike(int userId, int filmId) {
         findFilmById(filmId);
-        if (getLikes(filmId).contains(userId)) throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
+        if (getLikes(filmId).contains(userId))
+            throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
         String insertLikeQuery = "insert into FILM_LIKES (FILM_ID, USER_ID) VALUES (?,?)";
         jdbcTemplate.update(insertLikeQuery, filmId, userId);
         return findFilmById(filmId);
@@ -130,7 +132,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> removeLike(int userId, int filmId) {
         findFilmById(filmId);
-        if (!getLikes(filmId).contains(userId)) throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
+        if (!getLikes(filmId).contains(userId))
+            throw new LikeNotFoundException("Фильм не содержит лайк от данного пользователя");
         String deleteLikeQuery = "delete from FILM_LIKES where USER_ID = ? and FILM_ID = ?";
         jdbcTemplate.update(deleteLikeQuery, userId, filmId);
         return findFilmById(filmId);
@@ -145,6 +148,13 @@ public class FilmDbStorage implements FilmStorage {
                 .collect(Collectors.toList());
         if (mostPopularFilms.isEmpty()) return new ArrayList<>(findAll());
         return mostPopularFilms;
+    }
+
+    @Override
+    public void deleteFilmById(Integer filmId) {
+        findFilmById(filmId);
+        String deleteFilmByIdQuery = "delete from FILMS where FILM_ID=?";
+        jdbcTemplate.update(deleteFilmByIdQuery, filmId);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {

@@ -53,4 +53,9 @@ public class FilmController {
         if (count < 0) throw new IncorrectParameterException("Количество искомых фильмов не может быть отрицательным", "count");
         return filmService.showMostPopularFilms(count);
     }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilmById(@PathVariable(value = "filmId") Integer filmId) {
+        filmService.deleteFilmById(filmId);
+    }
 }
