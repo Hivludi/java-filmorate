@@ -142,59 +142,24 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
-        String showMostPopularFilmsQuery;
-        if (genreId.isPresent() && year.isPresent()) {
-            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
-                    "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
-                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                    "where fg.GENRE_ID = ? " +
-                    "and extract(year from f.RELEASE_DATE) = ? " +
-                    "group by f.FILM_ID " +
-                    "order by COUNT(fl.USER_ID) desc " +
-                    "limit ?";
-            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), year.get(), count)
+        String showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
+                "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                "where (? IS NULL OR fg.GENRE_ID = ?) " +
+                "and (? IS NULL OR extract(year from f.RELEASE_DATE) = ?) " +
+                "group by f.FILM_ID " +
+                "order by COUNT(fl.USER_ID) desc " +
+                "limit ?";
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class,
+                            genreId.orElse(null),
+                            genreId.orElse(null),
+                            year.orElse(null),
+                            year.orElse(null),
+                            count)
                     .stream()
                     .map(this::findFilmById)
                     .map(Optional::get)
                     .collect(Collectors.toList());
-        } else if (genreId.isPresent()) {
-            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
-                    "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
-                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                    "where fg.GENRE_ID = ? " +
-                    "group by f.FILM_ID " +
-                    "order by COUNT(fl.USER_ID) desc " +
-                    "limit ?";
-            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), count)
-                    .stream()
-                    .map(this::findFilmById)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-        } else if (year.isPresent()) {
-            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
-                    "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
-                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                    "where extract(year from f.RELEASE_DATE) = ? " +
-                    "group by f.FILM_ID " +
-                    "order by COUNT(fl.USER_ID) desc " +
-                    "limit ?";
-            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, year.get(), count)
-                    .stream()
-                    .map(this::findFilmById)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-        } else {
-            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
-                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                    "group by f.FILM_ID " +
-                    "order by COUNT(fl.USER_ID) desc " +
-                    "limit ?";
-            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, count)
-                    .stream()
-                    .map(this::findFilmById)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-        }
     }
 
     @Override
