@@ -32,8 +32,7 @@ INSERT INTO FILM_GENRES (FILM_ID, GENRE_ID)
 VALUES (1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,1), (7,2), (7,3);
 INSERT INTO FILM_LIKES (FILM_ID, USER_ID)
 VALUES (1,1), (1,2), (1,3), (2,1), (2,2), (3,1), (4,1), (4,2), (4,3), (5,1), (5,2), (6,1), (7,1), (7,2), (7,3);
-*/
-/*
+
 INSERT INTO REVIEWS (CONTENT, USER_ID, FILM_ID, IS_POSITIVE)
 VALUES ('Indian film, perfect', 1, 1, true),
        ('Hollywood film in best practice, sad', 2, 2, true),

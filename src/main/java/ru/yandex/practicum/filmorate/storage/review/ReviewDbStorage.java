@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.review;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
@@ -58,10 +59,13 @@ public class ReviewDbStorage implements ReviewStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs)).stream().collect(Collectors.toList());
     }
 
-    public Optional<Review> addLike(ReviewLike reviewLike) {
-        final int userId = reviewLike.getUserId();
-        final int reviewId = reviewLike.getReviewId();
-        findReviewById(reviewLike.getReviewId());
+    public Optional<Review> addLike(Integer reviewId, Integer userId) {
+        ReviewLike reviewLike = ReviewLike.builder()
+                .reviewId(reviewId)
+                .userId(userId)
+                .isPositive(true)
+                .build();
+        findReviewById(reviewId);
         userDbStorage.findUserById(userId);
         Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdandReviewId(userId, reviewId);
         if (reviewLikeLocal.isPresent()) {
@@ -74,10 +78,13 @@ public class ReviewDbStorage implements ReviewStorage {
         return Optional.empty();
     }
 
-    public Optional<Review> addDislike(ReviewLike reviewLike) {
-        final int userId = reviewLike.getUserId();
-        final int reviewId = reviewLike.getReviewId();
-        findReviewById(reviewLike.getReviewId());
+    public Optional<Review> addDislike(Integer reviewId, Integer userId) {
+        ReviewLike reviewLike = ReviewLike.builder()
+                .reviewId(reviewId)
+                .userId(userId)
+                .isPositive(false)
+                .build();
+        findReviewById(reviewId);
         userDbStorage.findUserById(userId);
         Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdandReviewId(userId, reviewId);
         if (reviewLikeLocal.isEmpty()) {

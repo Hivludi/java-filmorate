@@ -14,9 +14,9 @@ public interface ReviewStorage {
 
     Optional<Review> findReviewById(int id);
 
-    Optional<Review> addLike(ReviewLike reviewLike);
+    Optional<Review> addLike(Integer reviewId, Integer userId);
 
-    Optional<Review> addDislike(ReviewLike reviewLike);
+    Optional<Review> addDislike(Integer reviewId, Integer userId);
 
     Optional<Review> removeLike(ReviewLike reviewLike);
 

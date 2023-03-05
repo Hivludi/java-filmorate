@@ -25,9 +25,6 @@ public class Review {
     public boolean getIsPositive() {
         return this.isPositive;
     }
-
-    public boolean setIsPositive() {
-        return this.isPositive;
-    }
+    
 }
 

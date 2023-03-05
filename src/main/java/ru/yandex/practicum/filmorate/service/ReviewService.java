@@ -36,12 +36,12 @@ public class ReviewService {
         return reviewStorage.getReviewsByFilmId(filmId, count);
     }
 
-    public Optional<Review> addLike(ReviewLike reviewLike) {
-        return reviewStorage.addLike(reviewLike);
+    public Optional<Review> addLike(Integer reviewId, Integer userId) {
+        return reviewStorage.addLike(reviewId, userId);
     }
 
-    public Optional<Review> addDislike(ReviewLike reviewLike) {
-        return reviewStorage.addDislike(reviewLike);
+    public Optional<Review> addDislike(Integer reviewId, Integer userId) {
+        return reviewStorage.addDislike(reviewId, userId);
     }
 
     public Optional<Review> removeLike(ReviewLike reviewLike) {

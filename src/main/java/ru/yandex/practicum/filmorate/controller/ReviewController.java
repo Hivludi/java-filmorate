@@ -45,22 +45,12 @@ public class ReviewController {
 
     @PutMapping("/{id}/like/{userId}")
     public Optional<Review> addLike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
-        ReviewLike reviewLike = ReviewLike.builder()
-                .reviewId(reviewId)
-                .userId(userId)
-                .isPositive(true)
-                .build();
-        return reviewService.addLike(reviewLike);
+        return reviewService.addLike(reviewId, userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
     public Optional<Review> addDisLike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
-        ReviewLike reviewLike = ReviewLike.builder()
-                .reviewId(reviewId)
-                .userId(userId)
-                .isPositive(false)
-                .build();
-        return reviewService.addDislike(reviewLike);
+        return reviewService.addDislike(reviewId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
