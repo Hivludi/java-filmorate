@@ -20,7 +20,9 @@ public class GenreController {
 
     @GetMapping
     public Collection<Genre> findAll() {
+        System.out.println("Разраб1");
         return genreService.listGenre();
+        System.out.println("Разраб1");
     }
 
     @GetMapping("/{id}")
