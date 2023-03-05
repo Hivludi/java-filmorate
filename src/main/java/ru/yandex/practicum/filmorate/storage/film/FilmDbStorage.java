@@ -144,8 +144,8 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
             return findAll()
                     .stream()
-                    .filter(f -> {if(year.isPresent()) {return f.getReleaseDate().getYear() == year.get();} else {return true;}})
-                    .filter(f -> {if(genreId.isPresent()) {return f.getGenres().stream().map(Genre::getId).anyMatch(i -> i.equals(genreId.get()));} else {return true;}})
+                    .filter(f -> year.isEmpty() || f.getReleaseDate().getYear() == year.get())
+                    .filter(f -> genreId.isEmpty() || f.getGenres().stream().map(Genre::getId).anyMatch(i -> i.equals(genreId.get())))
                     .sorted(Comparator.comparing(Film -> Film.getLikes().size() * -1))
                     .limit(count)
                     .collect(Collectors.toList());
