@@ -40,12 +40,14 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Optional<Film> addLike(@PathVariable(value = "id") Integer filmId, @PathVariable Integer userId) {
+    public Optional<Film> addLike(@PathVariable(value = "id") Integer filmId,
+                                  @PathVariable Integer userId) {
         return filmService.addLike(userId, filmId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Optional<Film> removeLike(@PathVariable(value = "id") Integer filmId, @PathVariable Integer userId) {
+    public Optional<Film> removeLike(@PathVariable(value = "id") Integer filmId,
+                                     @PathVariable Integer userId) {
         return filmService.removeLike(userId, filmId);
     }
 
@@ -57,6 +59,12 @@ public class FilmController {
         if (genreId.isPresent() && genreId.get() < 0) throw new IncorrectParameterException("Идентификатор жанра не может быть отрицательным", "genreId");
         if (year.isPresent() && (year.get() < 1895 || year.get() > Integer.parseInt(String.valueOf(Year.now())))) throw new IncorrectParameterException(String.format("Год должен быть в пределах: %s-%s", 1895, Integer.parseInt(String.valueOf(Year.now()))), "year");
         return filmService.showMostPopularFilms(count, genreId, year);
+    }
+
+    @GetMapping("/common")
+    public List<Film> showCommonFilms(@RequestParam Integer userId,
+                                      @RequestParam Integer friendId) {
+        return filmService.showCommonFilms(userId, friendId);
     }
 
     @DeleteMapping("/{filmId}")
