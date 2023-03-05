@@ -66,6 +66,14 @@ class RecomendationsTest {
                 "   INSERT INTO FILM_LIKES (film_id, user_id)"
                 + " VALUES (1, 1), (1, 2), (1, 3), (2, 1), (2, 5), (3, 1), (3, 3), (3, 4), (3, 5), (4, 5);";
 
+        jdbcTemplate.update("DELETE FROM FILM_GENRES;");
+        jdbcTemplate.update("DELETE FROM FRIENDS_LIST;");
+        jdbcTemplate.update("DELETE FROM FILM_LIKES;");
+        jdbcTemplate.update("DELETE FROM FILMS;");
+        jdbcTemplate.update("DELETE FROM USERS;");
+        jdbcTemplate.update("ALTER TABLE FILMS ALTER COLUMN film_id RESTART WITH 1;");
+        jdbcTemplate.update("ALTER TABLE USERS ALTER COLUMN USER_ID RESTART WITH 1;");
+
         jdbcTemplate.update(filmsSQL);
         jdbcTemplate.update(filmsGenresSQL);
         jdbcTemplate.update(usersSQL);
