@@ -53,4 +53,9 @@ public class FilmController {
         if (count < 0) throw new IncorrectParameterException("Количество искомых фильмов не может быть отрицательным", "count");
         return filmService.showMostPopularFilms(count);
     }
+
+    @GetMapping("/search")
+    public List<Film> searchFilmsByNameOrDirector(@RequestParam String query, @RequestParam String by){
+        return filmService.searchFilmsByNameOrDirector(query, by);
+    }
 }

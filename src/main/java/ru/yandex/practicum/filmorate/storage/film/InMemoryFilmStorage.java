@@ -68,4 +68,19 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .limit(count)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Film> searchFilmsByNameOrDirector(String query) {
+        return null;
+    }
+
+    @Override
+    public List<Film> searchFilmsByName(String query) {
+        return null;
+    }
+
+    @Override
+    public List<Film> searchFilmsByDirector(String query) {
+        return null;
+    }
 }

@@ -22,4 +22,10 @@ public interface FilmStorage {
 
     List<Film> showMostPopularFilms(Integer count);
 
+    List<Film> searchFilmsByNameOrDirector(String query);
+
+    List<Film> searchFilmsByName(String query);
+
+    List<Film> searchFilmsByDirector(String query);
+
 }
