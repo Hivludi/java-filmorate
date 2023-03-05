@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("FilmDB")
 public class FilmDbStorage implements FilmStorage {
@@ -142,7 +143,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
         String showMostPopularFilmsQuery;
-        List<Film> mostPopularFilms = new ArrayList<>();
         if (genreId.isPresent() && year.isPresent()) {
             showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
                     "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
@@ -152,7 +152,7 @@ public class FilmDbStorage implements FilmStorage {
                     "group by f.FILM_ID " +
                     "order by COUNT(fl.USER_ID) desc " +
                     "limit ?";
-            mostPopularFilms = jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), year.get(), count)
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), year.get(), count)
                     .stream()
                     .map(this::findFilmById)
                     .map(Optional::get)
@@ -165,7 +165,7 @@ public class FilmDbStorage implements FilmStorage {
                     "group by f.FILM_ID " +
                     "order by COUNT(fl.USER_ID) desc " +
                     "limit ?";
-            mostPopularFilms = jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), count)
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), count)
                     .stream()
                     .map(this::findFilmById)
                     .map(Optional::get)
@@ -178,7 +178,7 @@ public class FilmDbStorage implements FilmStorage {
                     "group by f.FILM_ID " +
                     "order by COUNT(fl.USER_ID) desc " +
                     "limit ?";
-            mostPopularFilms = jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, year.get(), count)
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, year.get(), count)
                     .stream()
                     .map(this::findFilmById)
                     .map(Optional::get)
@@ -189,13 +189,12 @@ public class FilmDbStorage implements FilmStorage {
                     "group by f.FILM_ID " +
                     "order by COUNT(fl.USER_ID) desc " +
                     "limit ?";
-            mostPopularFilms = jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, count)
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, count)
                     .stream()
                     .map(this::findFilmById)
                     .map(Optional::get)
                     .collect(Collectors.toList());
         }
-        return mostPopularFilms;
     }
 
     @Override
