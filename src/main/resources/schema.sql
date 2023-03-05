@@ -69,8 +69,40 @@ create table IF NOT EXISTS FRIENDS_LIST
         foreign key (FRIEND_ID) references USERS
 );
 
+create table IF NOT EXISTS REVIEWS
+(
+    REVIEW_ID    INTEGER auto_increment,
+    CONTENT      CHARACTER VARYING(1000),
+    USER_ID      INTEGER not null,
+    FILM_ID      INTEGER not null,
+    USEFUL       INTEGER DEFAULT 0,
+    IS_POSITIVE  BOOLEAN,
+    constraint IF NOT EXISTS REVIEWS_PK
+        primary key (REVIEW_ID),
+    constraint IF NOT EXISTS REVIEWS_FK_USER_ID
+        foreign key (USER_ID) references USERS on delete set null,
+    constraint IF NOT EXISTS REVIEWS_FK_FILM_ID
+        foreign key (FILM_ID) references FILMS on delete set null,
+    constraint IF NOT EXISTS  UNIQUE_FILM_ID_USER_ID
+        unique ( USER_ID, FILM_ID )
+);
+
+create table IF NOT EXISTS REVIEW_LIKES
+(
+    REVIEW_ID    INTEGER,
+    USER_ID      INTEGER,
+    IS_POSITIVE  BOOLEAN,
+    constraint IF NOT EXISTS REVIEW_LIKES_PK
+        primary key (REVIEW_ID, USER_ID),
+    constraint IF NOT EXISTS REVIEW_LIKES_FK_USER_ID
+        foreign key (USER_ID) references USERS on delete cascade,
+    constraint IF NOT EXISTS REVIEW_LIKES_FK_REVIEW_ID
+        foreign key (REVIEW_ID) references REVIEWS on delete cascade
+);
+
  alter table FILMS alter column FILM_ID restart with 1;
  alter table GENRES alter column GENRE_ID restart with 1;
  alter table MPA alter column MPA_ID restart with 1;
  alter table USERS alter column USER_ID restart with 1;
+ alter table REVIEWS alter column REVIEW_ID restart with 1;
 
