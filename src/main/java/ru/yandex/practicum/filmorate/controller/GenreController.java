@@ -21,8 +21,12 @@ public class GenreController {
     @GetMapping
     public Collection<Genre> findAll() {
         System.out.println("Разраб1");
-        return genreService.listGenre();
         System.out.println("Разраб1");
+        System.out.println("Лялял");
+        System.out.println("Лялял");
+        System.out.println("Лялял");
+        return genreService.listGenre();
+        System.out.println("Лялял");
     }
 
     @GetMapping("/{id}")
