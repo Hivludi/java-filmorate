@@ -308,6 +308,53 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query);
     }
 
+    @Override
+    public List<Film> searchFilmsByNameOrDirector(String query) {
+        String sqlQuery = "select distinct f.*, " +
+                "M.NAME, " +
+                "count(fl.FILM_ID)" +
+                "from FILMS f " +
+                "left join MPA m on f.MPA_ID = m.MPA_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                /* "left join FILMS_DIRECTOR fd on f.FILM_ID=fd.FILM_ID " +
+                "left join DIRECTORS d on fd.DIRECTOR_ID=d.DIRECTOR_ID " +
+                "where lower(f.NAME) like ? or lower(d.NAME) like ? " +
+                */"group by f.FILM_ID " +
+                "order by count(FILM_ID) desc";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query, query);
+    }
+
+    @Override
+    public List<Film> searchFilmsByName(String query) {
+        String sqlQuery = "select distinct f.*, " +
+                "m.NAME, " +
+                "fl.FILM_ID  " +
+                "from FILMS f " +
+                "left join MPA m on f.MPA_ID = m.MPA_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                "where lower(f.NAME) like ? " +
+                "group by f.FILM_ID " +
+                "order by count(fl.FILM_ID) desc ";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query);
+    }
+
+    @Override
+    public List<Film> searchFilmsByDirector(String query) {
+        String sqlQuery = "select distinct f.*, " +
+                "m.NAME, " +
+                "fl.FILM_ID  " +
+                "from FILMS f " +
+                "left join MPA m on f.MPA_ID = m.MPA_ID " +
+                "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                //"where lower(d.NAME) like ? " +
+                "group by f.FILM_ID " +
+                "order by count(fl.FILM_ID) desc ";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query);
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         return Film.builder()
                 .id(rs.getInt("FILM_ID"))
