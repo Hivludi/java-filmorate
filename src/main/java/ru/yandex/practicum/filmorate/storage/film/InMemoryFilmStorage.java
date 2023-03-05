@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("FilmInMemory")
 @Slf4j
@@ -131,16 +132,22 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> searchFilmsByNameOrDirector(String query) {
-        return null;
+        return Stream.of(searchFilmsByName(query), searchFilmsByDirector(query))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Film> searchFilmsByName(String query) {
-        return null;
+        return new ArrayList<>(findAll()).stream()
+                .filter(film -> film.getName().contains(query))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Film> searchFilmsByDirector(String query) {
-        return null;
+        return new ArrayList<>(findAll()).stream()
+                .filter(film -> film.getName().contains(query))
+                .collect(Collectors.toList());
     }
 }
