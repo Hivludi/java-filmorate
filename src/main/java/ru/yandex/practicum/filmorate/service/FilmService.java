@@ -51,4 +51,6 @@ public class FilmService {
     public void deleteFilmById(Integer filmId) {
         filmStorage.deleteFilmById(filmId);
     }
+
+    public List<Film> findDirectorFilms(int directorId, String sortBy) {return filmStorage.findDirectorFilms(directorId, sortBy);}
 }

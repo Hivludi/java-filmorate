@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.annotations.NotBeforeCinemaInvented;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,4 +28,5 @@ public class Film {
     private final Set<Integer> likes;
     private final Mpa mpa;
     private final Set<Genre> genres;
+    private final List<Director> directors;
 }
