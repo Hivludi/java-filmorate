@@ -20,6 +20,7 @@ public class FilmController {
 
     @PostMapping
     public Optional<Film> create(@Validated @RequestBody Film film) {
+        System.out.println("Разраб 1 написал");
         return filmService.create(film);
     }
 
