@@ -145,10 +145,10 @@ public class FilmDbStorage implements FilmStorage {
         String showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
                 "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
                 "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                "where (? IS NULL OR fg.GENRE_ID = ?) " +
-                "and (? IS NULL OR extract(year from f.RELEASE_DATE) = ?) " +
+                "where (? is null or fg.GENRE_ID = ?) " +
+                "and (? is null or extract(year from f.RELEASE_DATE) = ?) " +
                 "group by f.FILM_ID " +
-                "order by COUNT(fl.USER_ID) desc " +
+                "order by count(fl.USER_ID) desc " +
                 "limit ?";
             return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class,
                             genreId.orElse(null),
@@ -160,6 +160,24 @@ public class FilmDbStorage implements FilmStorage {
                     .map(this::findFilmById)
                     .map(Optional::get)
                     .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Film> showCommonFilms(int userId, int friendId) {
+        String showCommonFilmsQuery = "select f.FILM_ID from FILMS f " +
+        "join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+        "where f.FILM_ID in " +
+                "(select FILM_ID from FILM_LIKES fl2 " +
+                "where USER_ID in (?,?) " +
+                "group by FILM_ID " +
+                "having count(USER_ID) = 2) " +
+        "group by f.FILM_ID " +
+        "order by count(fl.USER_ID) desc";
+        return jdbcTemplate.queryForList(showCommonFilmsQuery, Integer.class, userId, friendId)
+                .stream()
+                .map(this::findFilmById)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     @Override

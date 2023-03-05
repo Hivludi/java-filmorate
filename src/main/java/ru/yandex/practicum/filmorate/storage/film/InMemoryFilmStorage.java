@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.FilmAlreadyLikedException;
 import ru.yandex.practicum.filmorate.exceptions.LikeNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,22 +66,18 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
-        List<Film> mostPopularFilms = new ArrayList<>();
-        findAll().stream()
+        return findAll().stream()
                 .sorted(Comparator.comparingInt(f0 -> f0.getLikes().size() * -1))
-                .forEach(f0 -> {
-                    if (genreId.isPresent() && year.isPresent()) {
-                        if (f0.getGenres().contains(genreId) && f0.getReleaseDate().getYear() == year.get()) mostPopularFilms.add(f0);
-                    } else if (genreId.isPresent()) {
-                        if (f0.getGenres().contains(genreId)) mostPopularFilms.add(f0);
-                    } else if (year.isPresent()) {
-                        if (f0.getReleaseDate().getYear() == year.get()) mostPopularFilms.add(f0);
-                    } else {
-                        mostPopularFilms.add(f0);
-                    }
-                });
-        return mostPopularFilms.stream()
+                .filter(f -> year.isEmpty() || f.getReleaseDate().getYear() == year.get())
+                .filter(f -> genreId.isEmpty() || f.getGenres().stream().map(Genre::getId).anyMatch(i -> i.equals(genreId.get())))
                 .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    public List<Film> showCommonFilms(int userId, int friendId) {
+        return findAll().stream()
+                .sorted(Comparator.comparingInt(f0 -> f0.getLikes().size() * -1))
+                .filter(f -> f.getLikes().containsAll(List.of(userId, friendId)))
                 .collect(Collectors.toList());
     }
 

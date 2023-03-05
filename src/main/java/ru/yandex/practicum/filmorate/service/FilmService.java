@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -25,6 +26,10 @@ public class FilmService {
 
     public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
         return filmStorage.showMostPopularFilms(count, genreId, year);
+    }
+
+    public List<Film> showCommonFilms(int userId, int friendId) {
+        return filmStorage.showCommonFilms(userId, friendId);
     }
 
     public Optional<Film> create(Film film) {
