@@ -158,10 +158,10 @@ public class FilmDbStorage implements FilmStorage {
                 "from FILMS f " +
                 "left join MPA m on f.MPA_ID = m.MPA_ID " +
                 "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                /* "left join FILMS_DIRECTOR fd on f.FILM_ID=fd.FILM_ID " +
+                "left join FILM_DIRECTORS fd on f.FILM_ID=fd.FILM_ID " +
                 "left join DIRECTORS d on fd.DIRECTOR_ID=d.DIRECTOR_ID " +
                 "where lower(f.NAME) like ? or lower(d.NAME) like ? " +
-                */"group by f.FILM_ID " +
+                "group by f.FILM_ID " +
                 "order by count(FILM_ID) desc";
 
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> (makeFilm(rs)), query, query);
@@ -190,7 +190,9 @@ public class FilmDbStorage implements FilmStorage {
                 "from FILMS f " +
                 "left join MPA m on f.MPA_ID = m.MPA_ID " +
                 "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-                //"where lower(d.NAME) like ? " +
+                "left join FILM_DIRECTORS FD on f.FILM_ID = FD.FILM_ID " +
+                "left join DIRECTORS D on D.DIRECTOR_ID = FD.DIRECTOR_ID " +
+                "where lower(d.NAME) like ? " +
                 "group by f.FILM_ID " +
                 "order by count(fl.FILM_ID) desc ";
 
