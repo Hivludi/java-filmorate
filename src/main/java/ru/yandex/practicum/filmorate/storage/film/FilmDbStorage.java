@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("FilmDB")
 public class FilmDbStorage implements FilmStorage {
@@ -140,21 +141,60 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> showMostPopularFilms(Integer count) {
-        String showMostPopularFilmsQuery = "select FILM_ID from FILM_LIKES group by FILM_ID order by COUNT(USER_ID) desc limit ?";
-        List<Film> mostPopularFilms = jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, count).stream()
-                .map(this::findFilmById)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-        if (mostPopularFilms.isEmpty()) {
-            String sql = "select FILM_ID from FILMS limit ?";
-            List<Film> result = jdbcTemplate.queryForList(sql, Integer.class, count).stream()
+    public List<Film> showMostPopularFilms(Integer count, Optional<Integer> genreId, Optional<Integer> year) {
+        String showMostPopularFilmsQuery;
+        if (genreId.isPresent() && year.isPresent()) {
+            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
+                    "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
+                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                    "where fg.GENRE_ID = ? " +
+                    "and extract(year from f.RELEASE_DATE) = ? " +
+                    "group by f.FILM_ID " +
+                    "order by COUNT(fl.USER_ID) desc " +
+                    "limit ?";
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), year.get(), count)
+                    .stream()
                     .map(this::findFilmById)
                     .map(Optional::get)
                     .collect(Collectors.toList());
-            return result;
+        } else if (genreId.isPresent()) {
+            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
+                    "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
+                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                    "where fg.GENRE_ID = ? " +
+                    "group by f.FILM_ID " +
+                    "order by COUNT(fl.USER_ID) desc " +
+                    "limit ?";
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, genreId.get(), count)
+                    .stream()
+                    .map(this::findFilmById)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        } else if (year.isPresent()) {
+            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
+                    "left join FILM_GENRES fg on f.FILM_ID = fg.FILM_ID " +
+                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                    "where extract(year from f.RELEASE_DATE) = ? " +
+                    "group by f.FILM_ID " +
+                    "order by COUNT(fl.USER_ID) desc " +
+                    "limit ?";
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, year.get(), count)
+                    .stream()
+                    .map(this::findFilmById)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        } else {
+            showMostPopularFilmsQuery = "select f.FILM_ID from FILMS f " +
+                    "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                    "group by f.FILM_ID " +
+                    "order by COUNT(fl.USER_ID) desc " +
+                    "limit ?";
+            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class, count)
+                    .stream()
+                    .map(this::findFilmById)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
         }
-        return mostPopularFilms;
     }
 
     @Override
