@@ -44,8 +44,8 @@ public class ReviewService {
         return reviewStorage.addDislike(reviewId, userId);
     }
 
-    public Optional<Review> removeLike(ReviewLike reviewLike) {
-        return reviewStorage.removeLike(reviewLike);
+    public Optional<Review> removeLike(Integer reviewId, Integer userId) {
+        return reviewStorage.removeLike(reviewId, userId);
     }
 
     public Optional<Review> updateReview(Review review) {

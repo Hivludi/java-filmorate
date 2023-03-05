@@ -98,11 +98,8 @@ public class ReviewDbStorage implements ReviewStorage {
         }
     }
 
-
-    public Optional<Review> removeLike(ReviewLike reviewLike) {
-        final int userId = reviewLike.getUserId();
-        final int reviewId = reviewLike.getReviewId();
-        findReviewById(reviewLike.getReviewId());
+    public Optional<Review> removeLike(Integer reviewId, Integer userId) {
+        findReviewById(reviewId);
         userDbStorage.findUserById(userId);
         Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdandReviewId(userId, reviewId);
         if (reviewLikeLocal.isEmpty()) {

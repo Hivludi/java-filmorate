@@ -55,22 +55,12 @@ public class ReviewController {
 
     @DeleteMapping("/{id}/like/{userId}")
     public Optional<Review> removeLike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
-        ReviewLike reviewLike = ReviewLike.builder()
-                .reviewId(reviewId)
-                .userId(userId)
-                .isPositive(true)
-                .build();
-        return reviewService.removeLike(reviewLike);
+        return reviewService.removeLike(reviewId, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
     public Optional<Review> removeDislike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
-        ReviewLike reviewLike = ReviewLike.builder()
-                .reviewId(reviewId)
-                .userId(userId)
-                .isPositive(true)
-                .build();
-        return reviewService.removeLike(reviewLike);
+        return reviewService.removeLike(reviewId, userId);
     }
 
     @GetMapping()

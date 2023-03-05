@@ -18,7 +18,7 @@ public interface ReviewStorage {
 
     Optional<Review> addDislike(Integer reviewId, Integer userId);
 
-    Optional<Review> removeLike(ReviewLike reviewLike);
+    Optional<Review> removeLike(Integer reviewId, Integer userId);
 
     Optional<Review> update(Review review);
 
