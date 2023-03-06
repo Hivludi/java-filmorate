@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FilmService {
@@ -24,7 +25,6 @@ public class FilmService {
     }
 
     public Optional<Film> removeLike(int userId, int filmId) {
-        filmStorage.removeLike(userId, filmId);
         feedService.addFeedEvent("LIKE", "REMOVE", userId, filmId);
         return filmStorage.removeLike(userId, filmId);
     }

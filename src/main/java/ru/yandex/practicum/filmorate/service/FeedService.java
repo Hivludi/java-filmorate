@@ -12,13 +12,13 @@ public class FeedService {
     private final FeedDao feedDao;
 
     @Autowired
-    public FeedService (FeedDao feedDao){
+    public FeedService(FeedDao feedDao) {
         this.feedDao = feedDao;
     }
 
-    public FeedEvent addFeedEvent(String eventType, String operation, Integer userId, Integer entityId){
+    public FeedEvent addFeedEvent(String eventType, String operation, Integer userId, Integer entityId) {
         FeedEvent feedEvent = FeedEvent.builder()
-                .timeStamp(System.currentTimeMillis())
+                .timestamp(System.currentTimeMillis())
                 .eventType(eventType)
                 .operation(operation)
                 .userId(userId)
@@ -27,7 +27,7 @@ public class FeedService {
         return feedDao.addFeedEvent(feedEvent);
     }
 
-    public List<FeedEvent> getUserFeed(Integer userId){
+    public List<FeedEvent> getUserFeed(Integer userId) {
         return feedDao.getUserFeed(userId);
     }
 }

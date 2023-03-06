@@ -1,27 +1,29 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.model.ReviewLike;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ReviewService {
     private final ReviewStorage reviewStorage;
+    private final FeedService feedService;
 
-    public ReviewService(ReviewStorage reviewStorage) {
+    public ReviewService(ReviewStorage reviewStorage, FeedService feedService) {
+        this.feedService = feedService;
         this.reviewStorage = reviewStorage;
     }
 
     public Optional<Review> create(Review review) {
-        return reviewStorage.create(review);
+        Optional<Review> opt = reviewStorage.create(review);
+        if (opt.isPresent()) {
+            Review review1 = opt.get();
+            feedService.addFeedEvent("REVIEW", "ADD", review1.getUserId(), review1.getReviewId());
+        }
+        return opt;
     }
 
     public Optional<Review> findReviewById(int reviewId) {
@@ -49,10 +51,17 @@ public class ReviewService {
     }
 
     public Optional<Review> updateReview(Review review) {
+        feedService.addFeedEvent("REVIEW", "UPDATE", review.getUserId(), review.getReviewId());
         return reviewStorage.update(review);
     }
 
     public Optional<Review> deleteReview(int reviewId) {
+        Optional<Review> opt = findReviewById(reviewId);
+        if (opt.isPresent()) {
+            Review review = opt.get();
+            feedService.addFeedEvent("REVIEW", "REMOVE", review.getUserId(), review.getReviewId());
+        }
+
         return reviewStorage.delete(reviewId);
     }
 }

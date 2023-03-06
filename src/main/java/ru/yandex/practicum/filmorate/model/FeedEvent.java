@@ -11,7 +11,7 @@ import javax.validation.constraints.Positive;
 @Builder(toBuilder = true)
 public class FeedEvent {
     private int eventId;
-    private final Long timeStamp;
+    private final Long timestamp;
     @Positive(message = "Id пользователя не может быть отрицателным")
     private final Integer userId;
     private final String eventType;
