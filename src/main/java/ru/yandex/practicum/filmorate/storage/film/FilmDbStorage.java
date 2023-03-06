@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component("FilmDB")
 public class FilmDbStorage implements FilmStorage {
@@ -150,29 +149,29 @@ public class FilmDbStorage implements FilmStorage {
                 "group by f.FILM_ID " +
                 "order by count(fl.USER_ID) desc " +
                 "limit ?";
-            return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class,
-                            genreId.orElse(null),
-                            genreId.orElse(null),
-                            year.orElse(null),
-                            year.orElse(null),
-                            count)
-                    .stream()
-                    .map(this::findFilmById)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+        return jdbcTemplate.queryForList(showMostPopularFilmsQuery, Integer.class,
+                        genreId.orElse(null),
+                        genreId.orElse(null),
+                        year.orElse(null),
+                        year.orElse(null),
+                        count)
+                .stream()
+                .map(this::findFilmById)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Film> showCommonFilms(int userId, int friendId) {
         String showCommonFilmsQuery = "select f.FILM_ID from FILMS f " +
-        "join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
-        "where f.FILM_ID in " +
+                "join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
+                "where f.FILM_ID in " +
                 "(select FILM_ID from FILM_LIKES fl2 " +
                 "where USER_ID in (?,?) " +
                 "group by FILM_ID " +
                 "having count(USER_ID) = 2) " +
-        "group by f.FILM_ID " +
-        "order by count(fl.USER_ID) desc";
+                "group by f.FILM_ID " +
+                "order by count(fl.USER_ID) desc";
         return jdbcTemplate.queryForList(showCommonFilmsQuery, Integer.class, userId, friendId)
                 .stream()
                 .map(this::findFilmById)
@@ -185,6 +184,42 @@ public class FilmDbStorage implements FilmStorage {
         findFilmById(filmId);
         String deleteFilmByIdQuery = "delete from FILMS where FILM_ID=?";
         jdbcTemplate.update(deleteFilmByIdQuery, filmId);
+    }
+
+    public Collection<Film> showFilmsUserLikes(Integer userId) {
+        String filmsUserLikesSQL =
+                "SELECT f.* FROM FILMS f LEFT JOIN FILM_LIKES fl USING (FILM_ID) WHERE fl.USER_ID = ?";
+
+        return jdbcTemplate.query(filmsUserLikesSQL,
+                (rs, rowNum) -> makeFilm(rs),
+                userId);
+    }
+
+    @Override
+    public Collection<Film> showRecommendations(Integer userId) {
+        String filmPreferencesOtherUsersSQL =
+                "SELECT f.* FROM FILMS f LEFT JOIN FILM_LIKES fl USING (FILM_ID) WHERE fl.USER_ID = ?"
+                        + " EXCEPT "
+                        + " SELECT f2.* FROM FILMS f2 LEFT JOIN FILM_LIKES fl USING (FILM_ID) WHERE fl.USER_ID = ?";
+
+        // Все пользователи, которым также нравится фильмы пользователя, которому нужна рекомендация
+        Set<Integer> otherUserIds = showFilmsUserLikes(userId).stream()
+                .collect(HashSet::new,
+                        (collection, film) ->
+                                collection.addAll(film.getLikes()),
+                        Collection::addAll);
+
+        otherUserIds.remove(userId);
+
+        // Все понравившиеся фильмы, всех пользователей за исключением фильмов пользователя, которому нужна рекомендация
+        return otherUserIds.stream()
+                .collect(HashSet::new,
+                        (collection, otherUserId) ->
+                                collection.addAll(jdbcTemplate.query(filmPreferencesOtherUsersSQL,
+                                        (rs, rowNum) -> makeFilm(rs),
+                                        otherUserId,
+                                        userId)),
+                        Collection::addAll);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
