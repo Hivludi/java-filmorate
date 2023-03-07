@@ -71,4 +71,10 @@ public class FilmController {
     public void deleteFilmById(@PathVariable(value = "filmId") Integer filmId) {
         filmService.deleteFilmById(filmId);
     }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> findDirectorFilms(@PathVariable Integer directorId, @RequestParam(defaultValue = "likes", required = false) String sortBy) {
+        if (!(sortBy.equals("year") || sortBy.equals("likes"))) throw new IncorrectParameterException("Сортировка возможна либо по годам, либо по количеству лайков", "sortBy");
+        return filmService.findDirectorFilms(directorId, sortBy);
+    }
 }

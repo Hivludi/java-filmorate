@@ -124,4 +124,8 @@ public class InMemoryFilmStorage implements FilmStorage {
                         Collection::addAll);
     }
 
+    @Override
+    public List<Film> findDirectorFilms(int directorId, String sortBy) {
+        return null;
+    }
 }

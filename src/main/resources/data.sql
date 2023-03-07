@@ -1,4 +1,5 @@
 delete from FRIENDS_LIST;
+delete from FILM_DIRECTORS;
 delete from FILM_LIKES;
 delete from FILM_GENRES;
 delete from REVIEWS; -- порядок важен для соблюдения целостности таблиц
@@ -7,6 +8,7 @@ delete from FILMS;
 delete from USERS;
 delete from GENRES;
 delete from MPA;
+delete from DIRECTORS;
 
 INSERT INTO MPA (NAME) VALUES ('G'), ('PG'), ('PG-13'), ('R'), ('NC-17');
 

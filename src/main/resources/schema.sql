@@ -1,4 +1,12 @@
- create table IF NOT EXISTS GENRES
+create table IF NOT EXISTS DIRECTORS
+(
+    DIRECTOR_ID INTEGER auto_increment,
+    NAME        CHARACTER VARYING(50) not null,
+    constraint IF NOT EXISTS DIRECTORS_pk
+        primary key (DIRECTOR_ID)
+);
+
+create table IF NOT EXISTS GENRES
 (
     GENRE_ID INTEGER auto_increment,
     NAME     CHARACTER VARYING(50),
@@ -59,6 +67,18 @@ create table IF NOT EXISTS FILM_LIKES
         foreign key (USER_ID) references USERS
 );
 
+create table IF NOT EXISTS FILM_DIRECTORS
+(
+    FILM_ID     INTEGER not null,
+    DIRECTOR_ID INTEGER not null,
+    constraint IF NOT EXISTS "FILM_DIRECTORS_DIRECTORS_DIRECTOR_ID_fk"
+        foreign key (DIRECTOR_ID) references DIRECTORS
+            on update cascade on delete cascade,
+    constraint IF NOT EXISTS "FILM_DIRECTORS_FILMS_FILM_ID_fk"
+        foreign key (FILM_ID) references FILMS
+            on update cascade on delete cascade
+);
+
 create table IF NOT EXISTS FRIENDS_LIST
 (
     USER_ID   INTEGER not null REFERENCES USERS(USER_ID) ON DELETE CASCADE ,
@@ -105,4 +125,4 @@ create table IF NOT EXISTS REVIEW_LIKES
  alter table MPA alter column MPA_ID restart with 1;
  alter table USERS alter column USER_ID restart with 1;
  alter table REVIEWS alter column REVIEW_ID restart with 1;
-
+ alter table DIRECTORS alter column DIRECTOR_ID restart with 1;
