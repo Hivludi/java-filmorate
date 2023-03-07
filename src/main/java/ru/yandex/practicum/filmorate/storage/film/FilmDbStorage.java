@@ -280,7 +280,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> searchFilmsByName(String query) {
         String sqlQuery = "select distinct f.*, " +
                 "m.NAME, " +
-                "fl.FILM_ID  " +
+                "count(fl.FILM_ID)  " +
                 "from FILMS f " +
                 "left join MPA m on f.MPA_ID = m.MPA_ID " +
                 "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
@@ -295,7 +295,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> searchFilmsByDirector(String query) {
         String sqlQuery = "select distinct f.*, " +
                 "m.NAME, " +
-                "fl.FILM_ID  " +
+                "count(fl.FILM_ID)  " +
                 "from FILMS f " +
                 "left join MPA m on f.MPA_ID = m.MPA_ID " +
                 "left join FILM_LIKES fl on f.FILM_ID = fl.FILM_ID " +
