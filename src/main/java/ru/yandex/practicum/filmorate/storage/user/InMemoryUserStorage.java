@@ -85,14 +85,4 @@ public class InMemoryUserStorage implements UserStorage {
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }
-    
-    @Override
-    public void deleteUserById(Integer userId){
-        if (users.containsKey(userId)) {
-            users.remove(userId, users.get(userId));
-            log.info("Пользователь с id= " + userId + " удалён");
-        } else {
-            throw new ObjectNotFoundException("Пользователя с id= " + userId + " не существует");
-        }
-    }
 }

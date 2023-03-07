@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FeedEvent;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.*;
@@ -17,7 +14,6 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
-    private final FeedService feedService;
 
     @PostMapping
     public Optional<User> create(@Validated @RequestBody User user) {
@@ -57,21 +53,5 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> showMutualFriends(@PathVariable(value = "id") Integer userId, @PathVariable(value = "otherId") Integer user2Id) {
         return userService.showMutualFriends(userId, user2Id);
-    }
-
-    @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable(value = "userId") Integer userId){
-        userService.deleteUserById(userId);
-    }
-
-    @GetMapping("/{id}/recommendations")
-    public Collection<Film> showRecommendations(@PathVariable(value = "id") Integer userId) {
-        return userService.showRecommendations(userId);
-    }
-
-
-    @GetMapping("/{id}/feed")
-    public List<FeedEvent> getUserFeed(@PathVariable(value = "id") Integer id) {
-        return feedService.getUserFeed(id);
     }
 }
