@@ -18,12 +18,13 @@ public class ReviewService {
     }
 
     public Optional<Review> create(Review review) {
-        Optional<Review> opt = reviewStorage.create(review);
-        if (opt.isPresent()) {
-            Review review1 = opt.get();
-            feedService.addFeedEvent("REVIEW", "ADD", review1.getUserId(), review1.getReviewId());
+        Optional<Review> reviewOptional = reviewStorage.create(review);
+        if (reviewOptional.isPresent()) {
+            Review reviewCreated = reviewOptional.get();
+            feedService.addFeedEvent("REVIEW", "ADD", reviewCreated.getUserId(),
+                    reviewCreated.getReviewId());
         }
-        return opt;
+        return reviewOptional;
     }
 
     public Optional<Review> findReviewById(int reviewId) {
