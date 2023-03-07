@@ -52,8 +52,13 @@ public class ReviewService {
     }
 
     public Optional<Review> updateReview(Review review) {
-        feedService.addFeedEvent("REVIEW", "UPDATE", review.getUserId(), review.getReviewId());
-        return reviewStorage.update(review);
+        Optional<Review> reviewOptional = reviewStorage.update(review);
+        if (reviewOptional.isPresent()) {
+            Review reviewUpdated = reviewOptional.get();
+            feedService.addFeedEvent("REVIEW", "UPDATE", reviewUpdated.getUserId(),
+                    reviewUpdated.getReviewId());
+        }
+        return reviewOptional;
     }
 
     public Optional<Review> deleteReview(int reviewId) {
