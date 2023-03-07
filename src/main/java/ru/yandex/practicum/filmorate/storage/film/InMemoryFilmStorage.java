@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmAlreadyLikedException;
 import ru.yandex.practicum.filmorate.exceptions.LikeNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -147,7 +148,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> searchFilmsByDirector(String query) {
         return new ArrayList<>(findAll()).stream()
-                .filter(film -> film.getName().contains(query))
+                .filter(film -> film.getDirectors().contains(Director.builder().name(query).build()))
                 .collect(Collectors.toList());
     }
 }
