@@ -23,6 +23,4 @@ public interface UserStorage {
 
     List<User> showFriendList(int userId);
 
-    void deleteUserById(Integer userId);
-
 }
