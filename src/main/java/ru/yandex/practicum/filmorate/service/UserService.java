@@ -13,18 +13,22 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final FeedService feedService;
     private final FilmStorage filmStorage;
 
-    public UserService(@Qualifier("UserDB") UserStorage userStorage, @Qualifier("FilmDB") FilmStorage filmStorage) {
+    public UserService(@Qualifier("UserDB") UserStorage userStorage, @Qualifier("FilmDB") FilmStorage filmStorage, FeedService feedService) {
         this.userStorage = userStorage;
         this.filmStorage = filmStorage;
+        this.feedService = feedService;
     }
 
     public Optional<User> addFriend(int userId, int friendId) {
+        feedService.addFeedEvent("FRIEND", "ADD", userId, friendId);
         return userStorage.addFriend(userId, friendId);
     }
 
     public Optional<User> removeFriend(int userId, int friendId) {
+        feedService.addFeedEvent("FRIEND", "REMOVE", userId, friendId);
         return userStorage.removeFriend(userId, friendId);
     }
 

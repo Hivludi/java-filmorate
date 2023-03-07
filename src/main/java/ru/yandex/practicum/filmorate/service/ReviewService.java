@@ -1,27 +1,30 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.model.ReviewLike;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ReviewService {
     private final ReviewStorage reviewStorage;
+    private final FeedService feedService;
 
-    public ReviewService(ReviewStorage reviewStorage) {
+    public ReviewService(ReviewStorage reviewStorage, FeedService feedService) {
+        this.feedService = feedService;
         this.reviewStorage = reviewStorage;
     }
 
     public Optional<Review> create(Review review) {
-        return reviewStorage.create(review);
+        Optional<Review> reviewOptional = reviewStorage.create(review);
+        if (reviewOptional.isPresent()) {
+            Review reviewCreated = reviewOptional.get();
+            feedService.addFeedEvent("REVIEW", "ADD", reviewCreated.getUserId(),
+                    reviewCreated.getReviewId());
+        }
+        return reviewOptional;
     }
 
     public Optional<Review> findReviewById(int reviewId) {
@@ -49,10 +52,22 @@ public class ReviewService {
     }
 
     public Optional<Review> updateReview(Review review) {
-        return reviewStorage.update(review);
+        Optional<Review> reviewOptional = reviewStorage.update(review);
+        if (reviewOptional.isPresent()) {
+            Review reviewUpdated = reviewOptional.get();
+            feedService.addFeedEvent("REVIEW", "UPDATE", reviewUpdated.getUserId(),
+                    reviewUpdated.getReviewId());
+        }
+        return reviewOptional;
     }
 
     public Optional<Review> deleteReview(int reviewId) {
+        Optional<Review> opt = findReviewById(reviewId);
+        if (opt.isPresent()) {
+            Review review = opt.get();
+            feedService.addFeedEvent("REVIEW", "REMOVE", review.getUserId(), review.getReviewId());
+        }
+
         return reviewStorage.delete(reviewId);
     }
 }
