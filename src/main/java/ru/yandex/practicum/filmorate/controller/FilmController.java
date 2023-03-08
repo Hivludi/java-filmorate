@@ -77,4 +77,9 @@ public class FilmController {
         if (!(sortBy.equals("year") || sortBy.equals("likes"))) throw new IncorrectParameterException("Сортировка возможна либо по годам, либо по количеству лайков", "sortBy");
         return filmService.findDirectorFilms(directorId, sortBy);
     }
+
+    @GetMapping("/search")
+    public List<Film> searchFilmsByNameOrDirector(@RequestParam String query, @RequestParam String by){
+        return filmService.searchFilmsByNameOrDirector(query, by);
+    }
 }

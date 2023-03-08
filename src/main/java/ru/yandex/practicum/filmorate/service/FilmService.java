@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -57,5 +59,28 @@ public class FilmService {
         filmStorage.deleteFilmById(filmId);
     }
 
-    public List<Film> findDirectorFilms(int directorId, String sortBy) {return filmStorage.findDirectorFilms(directorId, sortBy);}
+    public List<Film> findDirectorFilms(int directorId, String sortBy) {
+        return filmStorage.findDirectorFilms(directorId, sortBy);}
+
+    public List<Film> searchFilmsByNameOrDirector(String query, String by) {
+        String[] bySplit = by.split(",");
+        String queryToLowerCase = "%" + query.toLowerCase() + "%";
+        if (bySplit.length > 2 || (!Arrays.asList(bySplit).contains("title")
+                && !Arrays.asList(bySplit).contains("director"))) {
+            throw new IncorrectParameterException(by, " параметр должен принимать значения director, " +
+                    "title или director, title.");
+        } else if (bySplit.length == 2) {
+            return filmStorage.searchFilmsByNameOrDirector(queryToLowerCase);
+        } else {
+            switch (bySplit[0]) {
+                case "title":
+                    return filmStorage.searchFilmsByName(queryToLowerCase);
+                case "director":
+                    return filmStorage.searchFilmsByDirector(queryToLowerCase);
+                default:
+                    throw new IncorrectParameterException(by, " параметр должен принимать значения director, " +
+                            "title или director, title.");
+            }
+        }
+    }
 }
