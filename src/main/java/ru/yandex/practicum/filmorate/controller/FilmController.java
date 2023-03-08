@@ -55,9 +55,15 @@ public class FilmController {
     public List<Film> findMostPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
                                            @RequestParam Optional<Integer> genreId,
                                            @RequestParam Optional<Integer> year) {
-        if (count < 0) throw new IncorrectParameterException("Количество искомых фильмов не может быть отрицательным", "count");
-        if (genreId.isPresent() && genreId.get() < 0) throw new IncorrectParameterException("Идентификатор жанра не может быть отрицательным", "genreId");
-        if (year.isPresent() && (year.get() < 1895 || year.get() > Integer.parseInt(String.valueOf(Year.now())))) throw new IncorrectParameterException(String.format("Год должен быть в пределах: %s-%s", 1895, Integer.parseInt(String.valueOf(Year.now()))), "year");
+        if (count < 0)
+            throw new IncorrectParameterException("Количество искомых фильмов не может быть отрицательным", "count");
+        if (genreId.isPresent() && genreId.get() < 0)
+            throw new IncorrectParameterException("Идентификатор жанра не может быть отрицательным", "genreId");
+        if (year.isPresent() && (year.get() < 1895 || year.get() > Integer.parseInt(String.valueOf(Year.now()))))
+            throw new IncorrectParameterException(String.format("Год должен быть в пределах: %s-%s",
+                    1895,
+                    Integer.parseInt(String.valueOf(Year.now()))),
+                    "year");
         return filmService.showMostPopularFilms(count, genreId, year);
     }
 
@@ -73,8 +79,10 @@ public class FilmController {
     }
 
     @GetMapping("/director/{directorId}")
-    public List<Film> findDirectorFilms(@PathVariable Integer directorId, @RequestParam(defaultValue = "likes", required = false) String sortBy) {
-        if (!(sortBy.equals("year") || sortBy.equals("likes"))) throw new IncorrectParameterException("Сортировка возможна либо по годам, либо по количеству лайков", "sortBy");
+    public List<Film> findDirectorFilms(@PathVariable Integer directorId,
+                                        @RequestParam(defaultValue = "likes", required = false) String sortBy) {
+        if (!(sortBy.equals("year") || sortBy.equals("likes")))
+            throw new IncorrectParameterException("Сортировка возможна либо по годам, либо по количеству лайков", "sortBy");
         return filmService.findDirectorFilms(directorId, sortBy);
     }
 

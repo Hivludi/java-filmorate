@@ -6,8 +6,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,7 +64,8 @@ public class DirectorDao {
     }
 
     public List<Director> listDirectorByFilmId(long filmId) {
-        String sql = "select * from DIRECTORS where DIRECTOR_ID in (select DIRECTOR_ID from FILM_DIRECTORS where FILM_ID = ?)";
+        String sql = "select * from DIRECTORS where DIRECTOR_ID in " +
+                "(select DIRECTOR_ID from FILM_DIRECTORS where FILM_ID = ?)";
         return new ArrayList<>(jdbcTemplate.query(sql, (rs, rowNum) -> makeDirector(rs), filmId));
     }
 

@@ -76,7 +76,8 @@ public class UserDbStorage implements UserStorage {
         String sql = "select * from USERS where USER_ID = ?";
         Optional<User> user = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id).stream()
                 .findAny();
-        if (user.isEmpty()) throw new ObjectNotFoundException(String.format("Пользователь с идентификатором %s не найден", id));
+        if (user.isEmpty()) throw new ObjectNotFoundException(
+                String.format("Пользователь с идентификатором %s не найден", id));
         return user;
     }
 
@@ -90,7 +91,9 @@ public class UserDbStorage implements UserStorage {
     public Optional<User> addFriend(int userId, int friendId) {
         findUserById(userId);
         findUserById(friendId);
-        if (getFriends(userId).contains(friendId)) throw new UserAlreadyFriendedException(String.format("Пользователь с идентификатором %s уже добавлен в друзья", friendId));
+        if (getFriends(userId).contains(friendId))
+            throw new UserAlreadyFriendedException(
+                    String.format("Пользователь с идентификатором %s уже добавлен в друзья", friendId));
         String insertFriendQuery = "insert into FRIENDS_LIST (USER_ID, FRIEND_ID) VALUES (?,?)";
         jdbcTemplate.update(insertFriendQuery, userId, friendId);
         return findUserById(userId);
@@ -100,7 +103,9 @@ public class UserDbStorage implements UserStorage {
     public Optional<User> removeFriend(int userId, int friendId) {
         findUserById(userId);
         findUserById(friendId);
-        if (!getFriends(userId).contains(friendId)) throw new FriendNotFoundException(String.format("Пользователя с идентификатором %s нет в друзьях", friendId));
+        if (!getFriends(userId).contains(friendId))
+            throw new FriendNotFoundException(
+                    String.format("Пользователя с идентификатором %s нет в друзьях", friendId));
         String deleteFriendQuery = "delete from FRIENDS_LIST where USER_ID = ? and FRIEND_ID = ?";
         jdbcTemplate.update(deleteFriendQuery, userId, friendId);
         return findUserById(userId);

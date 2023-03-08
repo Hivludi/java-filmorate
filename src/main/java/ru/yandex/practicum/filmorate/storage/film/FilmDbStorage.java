@@ -105,7 +105,7 @@ public class FilmDbStorage implements FilmStorage {
     public Optional<Film> addLike(int userId, int filmId) {
         findFilmById(filmId);
         if (getLikes(filmId).contains(userId))
-            throw new FilmAlreadyLikedException("Фильм уже содержит лайк от данного пользователя");
+            return findFilmById(filmId);
         String insertLikeQuery = "insert into FILM_LIKES (FILM_ID, USER_ID) VALUES (?,?)";
         jdbcTemplate.update(insertLikeQuery, filmId, userId);
         return findFilmById(filmId);
@@ -182,7 +182,8 @@ public class FilmDbStorage implements FilmStorage {
         String filmPreferencesOtherUsersSQL =
                 "SELECT f.* FROM FILMS f LEFT JOIN FILM_LIKES fl ON (f.FILM_ID = fl.FILM_ID) WHERE fl.USER_ID = ?"
                         + " EXCEPT "
-                        + " SELECT f2.* FROM FILMS f2 LEFT JOIN FILM_LIKES fl ON (f2.FILM_ID = fl.FILM_ID) WHERE fl.USER_ID = ?";
+                        + " SELECT f2.* FROM FILMS f2 "
+                        + "LEFT JOIN FILM_LIKES fl ON (f2.FILM_ID = fl.FILM_ID) WHERE fl.USER_ID = ?";
 
         // Все пользователи, которым также нравится фильмы пользователя, которому нужна рекомендация
         Set<Integer> otherUserIds = showFilmsUserLikes(userId).stream()
@@ -297,7 +298,8 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         if (film.getDirectors() != null && !film.getDirectors().isEmpty()) {
-            StringBuilder insertDirectorsQuery = new StringBuilder("insert into FILM_DIRECTORS (FILM_ID, DIRECTOR_ID) VALUES ");
+            StringBuilder insertDirectorsQuery =
+                    new StringBuilder("insert into FILM_DIRECTORS (FILM_ID, DIRECTOR_ID) VALUES ");
             int i = 0;
             for (Director d : film.getDirectors()) {
                 if (i != 0) insertDirectorsQuery.append(", ");

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.review;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,10 @@ public class ReviewDbStorage implements ReviewStorage {
     private final FilmDbStorage filmDbStorage;
 
     @Autowired
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate, ReviewLikesDao reviewLikesDao, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage) {
+    public ReviewDbStorage(JdbcTemplate jdbcTemplate,
+                           ReviewLikesDao reviewLikesDao,
+                           UserDbStorage userDbStorage,
+                           FilmDbStorage filmDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.reviewLikesDao = reviewLikesDao;
         this.userDbStorage = userDbStorage;
@@ -67,7 +69,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 .build();
         findReviewById(reviewId);
         userDbStorage.findUserById(userId);
-        Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdandReviewId(userId, reviewId);
+        Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdAndReviewId(userId, reviewId);
         if (reviewLikeLocal.isPresent()) {
             throw new ReviewLikeAlreadyExistException(String.format("reviewId = \"%s\" userId = %s", reviewId, userId));
         }
@@ -86,7 +88,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 .build();
         findReviewById(reviewId);
         userDbStorage.findUserById(userId);
-        Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdandReviewId(userId, reviewId);
+        Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdAndReviewId(userId, reviewId);
         if (reviewLikeLocal.isEmpty()) {
             Optional<ReviewLike> reviewLikeCreated = reviewLikesDao.create(reviewLike);
             if (reviewLikeCreated.isPresent()) {
@@ -94,16 +96,18 @@ public class ReviewDbStorage implements ReviewStorage {
             }
             return Optional.empty();
         } else {
-            throw new ReviewLikeAlreadyExistException(String.format("попытка повторно поставить dislike, reviewId = \"%s\" userId = %s", reviewId, userId));
+            throw new ReviewLikeAlreadyExistException(
+                    String.format("попытка повторно поставить dislike, reviewId = \"%s\" userId = %s", reviewId, userId));
         }
     }
 
     public Optional<Review> removeLike(Integer reviewId, Integer userId) {
         findReviewById(reviewId);
         userDbStorage.findUserById(userId);
-        Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdandReviewId(userId, reviewId);
+        Optional<ReviewLike> reviewLikeLocal = reviewLikesDao.findLikeByUserIdAndReviewId(userId, reviewId);
         if (reviewLikeLocal.isEmpty()) {
-            throw new ObjectNotFoundException(String.format("Review like не существует reviewId = \"%s\" userId = %s", reviewId, userId));
+            throw new ObjectNotFoundException(
+                    String.format("Review like не существует reviewId = \"%s\" userId = %s", reviewId, userId));
         }
         Optional<ReviewLike> reviewLikeDeleted = reviewLikesDao.deleteLike(reviewLikeLocal.get());
         if (reviewLikeDeleted.isPresent()) {
