@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.model.ReviewLike;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.List;
@@ -44,27 +43,32 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Optional<Review> addLike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
+    public Optional<Review> addLike(@PathVariable(value = "id") Integer reviewId,
+                                    @PathVariable Integer userId) {
         return reviewService.addLike(reviewId, userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
-    public Optional<Review> addDisLike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
+    public Optional<Review> addDisLike(@PathVariable(value = "id") Integer reviewId,
+                                       @PathVariable Integer userId) {
         return reviewService.addDislike(reviewId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Optional<Review> removeLike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
+    public Optional<Review> removeLike(@PathVariable(value = "id") Integer reviewId,
+                                       @PathVariable Integer userId) {
         return reviewService.removeLike(reviewId, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
-    public Optional<Review> removeDislike(@PathVariable(value = "id") Integer reviewId, @PathVariable Integer userId) {
+    public Optional<Review> removeDislike(@PathVariable(value = "id") Integer reviewId,
+                                          @PathVariable Integer userId) {
         return reviewService.removeLike(reviewId, userId);
     }
 
     @GetMapping()
-    public List<Review> getReviewsByFilmId(@RequestParam(required = false) Integer filmId, @RequestParam(defaultValue = "10", required = false) int count) {
+    public List<Review> getReviewsByFilmId(@RequestParam(required = false) Integer filmId,
+                                           @RequestParam(defaultValue = "10", required = false) int count) {
         if (filmId == null) {
             return reviewService.getAllReviews();
         }

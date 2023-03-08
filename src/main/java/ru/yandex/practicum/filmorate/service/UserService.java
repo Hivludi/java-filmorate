@@ -16,7 +16,8 @@ public class UserService {
     private final FeedService feedService;
     private final FilmStorage filmStorage;
 
-    public UserService(@Qualifier("UserDB") UserStorage userStorage, @Qualifier("FilmDB") FilmStorage filmStorage, FeedService feedService) {
+    public UserService(@Qualifier("UserDB") UserStorage userStorage,
+                       @Qualifier("FilmDB") FilmStorage filmStorage, FeedService feedService) {
         this.userStorage = userStorage;
         this.filmStorage = filmStorage;
         this.feedService = feedService;

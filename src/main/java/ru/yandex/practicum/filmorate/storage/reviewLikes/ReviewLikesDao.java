@@ -22,9 +22,10 @@ public class ReviewLikesDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Optional<ReviewLike> findLikeByUserIdandReviewId(int userId, int reviewId) {
+    public Optional<ReviewLike> findLikeByUserIdAndReviewId(int userId, int reviewId) {
         return jdbcTemplate
-                .query("select * from REVIEW_LIKES where USER_ID = ? AND REVIEW_ID = ?", (rs, rowNum) -> makeReviewLikes(rs), userId, reviewId)
+                .query("select * from REVIEW_LIKES where USER_ID = ? AND REVIEW_ID = ?",
+                        (rs, rowNum) -> makeReviewLikes(rs), userId, reviewId)
                 .stream()
                 .findAny();
     }
@@ -40,7 +41,7 @@ public class ReviewLikesDao {
                 reviewLike.getUserId()
         );
         if (amountUpdatedRows > 0) {
-            return findLikeByUserIdandReviewId(reviewLike.getUserId(), reviewLike.getReviewId());
+            return findLikeByUserIdAndReviewId(reviewLike.getUserId(), reviewLike.getReviewId());
         }
         return Optional.empty();
     }
@@ -64,7 +65,7 @@ public class ReviewLikesDao {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("REVIEW_LIKES");
         int reviewId = simpleJdbcInsert.execute(toMap(reviewLike));
-        return findLikeByUserIdandReviewId(reviewLike.getUserId(), reviewLike.getReviewId());
+        return findLikeByUserIdAndReviewId(reviewLike.getUserId(), reviewLike.getReviewId());
     }
 
     private Map<String, Object> toMap(ReviewLike reviewLike) {
