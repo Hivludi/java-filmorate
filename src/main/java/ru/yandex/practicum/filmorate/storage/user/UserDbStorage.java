@@ -132,6 +132,13 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteUserById(Integer userId){
+        findUserById(userId);
+        String deleteUserByIdQuery = "delete from USERS where USER_ID = ?";
+        jdbcTemplate.update(deleteUserByIdQuery, userId);
+    }
+
     private User makeUser(ResultSet rs) throws SQLException {
         return User.builder()
                 .id(rs.getInt("USER_ID"))
