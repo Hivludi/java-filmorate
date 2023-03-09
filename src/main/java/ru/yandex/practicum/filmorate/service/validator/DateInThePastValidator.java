@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service.validator;
 
-import ru.yandex.practicum.filmorate.annotations.DateInThePast;
+import ru.yandex.practicum.filmorate.annotation.DateInThePast;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
