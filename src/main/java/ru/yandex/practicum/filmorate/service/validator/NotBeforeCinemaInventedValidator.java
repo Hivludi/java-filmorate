@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service.validator;
 
-import ru.yandex.practicum.filmorate.annotations.NotBeforeCinemaInvented;
+import ru.yandex.practicum.filmorate.annotation.NotBeforeCinemaInvented;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
