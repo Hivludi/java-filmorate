@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.reviewLikes;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -13,27 +14,23 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class ReviewLikesDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public ReviewLikesDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     public Optional<ReviewLike> findLikeByUserIdAndReviewId(int userId, int reviewId) {
         return jdbcTemplate
-                .query("select * from REVIEW_LIKES where USER_ID = ? AND REVIEW_ID = ?",
+                .query("SELECT * FROM review_likes WHERE user_id = ? AND review_id = ?",
                         (rs, rowNum) -> makeReviewLikes(rs), userId, reviewId)
                 .stream()
                 .findAny();
     }
 
     public Optional<ReviewLike> updateLike(ReviewLike reviewLike) {
-        String sql = "update REVIEW_LIKES set " +
-                "IS_POSITIVE = ? " +
-                "where REVIEW_ID = ? AND USER_ID = ?";
+        String sql = "UPDATE review_likes SET " +
+                "is_positive = ? " +
+                "WHERE review_id = ? AND user_id = ?";
         int amountUpdatedRows = jdbcTemplate.update(
                 sql,
                 reviewLike.isPositive(),
@@ -47,8 +44,8 @@ public class ReviewLikesDao {
     }
 
     public Optional<ReviewLike> deleteLike(ReviewLike reviewLike) {
-        String sql = "delete from REVIEW_LIKES " +
-                "where REVIEW_ID = ? AND USER_ID = ?";
+        String sql = "DELETE FROM review_likes " +
+                "WHERE review_id = ? AND user_id = ?";
         int amountUpdatedRows = jdbcTemplate.update(
                 sql,
                 reviewLike.getReviewId(),

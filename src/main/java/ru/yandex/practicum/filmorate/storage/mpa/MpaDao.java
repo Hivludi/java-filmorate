@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.mpa;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -11,24 +12,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class MpaDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public MpaDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     public Optional<Mpa> getMpaById(int mpaId) {
         return jdbcTemplate
-                .query("select * from MPA where MPA_ID = ?", (rs, rowNum) -> makeMpa(rs), mpaId)
+                .query("SELECT * FROM mpa WHERE mpa_id = ?", (rs, rowNum) -> makeMpa(rs), mpaId)
                 .stream()
                 .findAny();
     }
 
     public List<Mpa> listMpa() {
-        return jdbcTemplate.query("select * from MPA", (rs, rowNum) -> makeMpa(rs));
+        return jdbcTemplate.query("SELECT * FROM mpa", (rs, rowNum) -> makeMpa(rs));
     }
 
     private Mpa makeMpa(ResultSet rs) throws SQLException {

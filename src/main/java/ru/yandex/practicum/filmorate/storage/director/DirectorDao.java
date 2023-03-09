@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.director;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -12,17 +13,13 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class DirectorDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public DirectorDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     public Optional<Director> getDirectorById(int directorId) {
-        String sql = "select * from DIRECTORS where DIRECTOR_ID = ?";
+        String sql = "SELECT * FROM directors WHERE director_id = ?";
         Optional<Director> director = jdbcTemplate.query(sql, (rs, rowNum) -> makeDirector(rs), directorId)
                 .stream()
                 .findAny();
@@ -32,7 +29,7 @@ public class DirectorDao {
     }
 
     public List<Director> listDirector() {
-        return jdbcTemplate.query("select * from DIRECTORS", (rs, rowNum) -> makeDirector(rs));
+        return jdbcTemplate.query("SELECT * FROM directors", (rs, rowNum) -> makeDirector(rs));
     }
 
     public Optional<Director> create(Director director) {
@@ -46,9 +43,9 @@ public class DirectorDao {
 
     public Optional<Director> update(Director director) {
         getDirectorById(director.getId());
-        String sql = "update DIRECTORS set " +
-                "NAME = ? " +
-                "where DIRECTOR_ID = ?";
+        String sql = "UPDATE directors SET " +
+                "name = ? " +
+                "WHERE director_id = ?";
         jdbcTemplate.update(
                 sql,
                 director.getName(),
@@ -59,13 +56,13 @@ public class DirectorDao {
 
     public void delete(int directorId) {
         getDirectorById(directorId);
-        String deleteDirectorByIdQuery = "delete from DIRECTORS where DIRECTOR_ID = ?";
+        String deleteDirectorByIdQuery = "DELETE FROM directors WHERE director_id = ?";
         jdbcTemplate.update(deleteDirectorByIdQuery, directorId);
     }
 
     public List<Director> listDirectorByFilmId(long filmId) {
-        String sql = "select * from DIRECTORS where DIRECTOR_ID in " +
-                "(select DIRECTOR_ID from FILM_DIRECTORS where FILM_ID = ?)";
+        String sql = "SELECT * FROM directors WHERE director_id in " +
+                "(SELECT director_id FROM film_directors WHERE film_id = ?)";
         return new ArrayList<>(jdbcTemplate.query(sql, (rs, rowNum) -> makeDirector(rs), filmId));
     }
 

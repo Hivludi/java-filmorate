@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
@@ -9,13 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DirectorService {
     private final DirectorDao directorDao;
-
-    @Autowired
-    public DirectorService(DirectorDao directorDao) {
-        this.directorDao = directorDao;
-    }
 
     public Optional<Director> getDirectorById(int directorId) {
         return directorDao.getDirectorById(directorId);

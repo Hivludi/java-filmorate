@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
@@ -10,13 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MpaService {
     private final MpaDao mpaDao;
-
-    @Autowired
-    public MpaService (MpaDao mpaDao) {
-        this.mpaDao = mpaDao;
-    }
 
     public Optional<Mpa> getMpaById(int mpaId) {
         if (mpaDao.getMpaById(mpaId).isPresent()) return mpaDao.getMpaById(mpaId);

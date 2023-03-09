@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.review;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -18,26 +19,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ReviewDbStorage implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
     private final ReviewLikesDao reviewLikesDao;
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
 
-    @Autowired
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate,
-                           ReviewLikesDao reviewLikesDao,
-                           UserDbStorage userDbStorage,
-                           FilmDbStorage filmDbStorage) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.reviewLikesDao = reviewLikesDao;
-        this.userDbStorage = userDbStorage;
-        this.filmDbStorage = filmDbStorage;
-    }
-
     @Override
     public Optional<Review> findReviewById(int id) {
-        String sql = "select * from REVIEWS where REVIEW_ID = ?";
+        String sql = "SELECT * FROM reviews WHERE review_id = ?";
         Optional<Review> review = jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), id).stream()
                 .findAny();
         if (review.isEmpty())
@@ -47,17 +38,17 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public List<Review> getReviewsByFilmId(int filmId, int count) {
-        String sql = "select * from REVIEWS " +
-                "where FILM_ID = ? " +
-                "ORDER BY USEFUL DESC " +
+        String sql = "SELECT * FROM reviews " +
+                "WHERE film_id = ? " +
+                "ORDER BY useful DESC " +
                 "LIMIT ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), filmId, count).stream().collect(Collectors.toList());
     }
 
     @Override
     public List<Review> getAllReviews() {
-        String sql = "select * from REVIEWS " +
-                "ORDER BY USEFUL DESC ";
+        String sql = "SELECT * FROM reviews " +
+                "ORDER BY useful DESC ";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs)).stream().collect(Collectors.toList());
     }
 
@@ -152,9 +143,9 @@ public class ReviewDbStorage implements ReviewStorage {
         Optional<Review> review = findReviewById(reviewId);
         int useful = review.get().getUseful();
         int usefulUpdated = positive ? useful + 1 : useful - 1;
-        String sql = "update REVIEWS set " +
-                "USEFUL = ? " +
-                "where REVIEW_ID = ?";
+        String sql = "UPDATE reviews SET " +
+                "useful = ? " +
+                "WHERE review_id = ?";
         int amountUpdatedRows = jdbcTemplate.update(
                 sql,
                 usefulUpdated,
@@ -168,10 +159,10 @@ public class ReviewDbStorage implements ReviewStorage {
 
     public Optional<Review> update(Review review) {
         findReviewById(review.getReviewId());
-        String sql = "update REVIEWS set " +
-                "CONTENT = ?, " +
-                "IS_POSITIVE = ? " +
-                "where REVIEW_ID = ?";
+        String sql = "UPDATE reviews SET " +
+                "content = ?, " +
+                "is_positive = ? " +
+                "WHERE review_id = ?";
         int amountUpdatedRows = jdbcTemplate.update(
                 sql,
                 review.getContent(),
@@ -186,8 +177,8 @@ public class ReviewDbStorage implements ReviewStorage {
 
     public Optional<Review> delete(int reviewId) {
         Optional<Review> review = findReviewById(reviewId);
-        String sql = "delete from REVIEWS " +
-                "where REVIEW_ID = ?";
+        String sql = "DELETE FROM reviews " +
+                "WHERE review_id = ?";
         int amountUpdatedRows = jdbcTemplate.update(
                 sql,
                 reviewId

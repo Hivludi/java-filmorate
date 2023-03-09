@@ -45,7 +45,7 @@ public class FeedDao {
         if (userStorage.findUserById(userId).isEmpty()) {
             throw new ObjectNotFoundException("Пользователя с таким id нет в базе!");
         }
-        return jdbcTemplate.query("select * from EVENTS where USER_ID = ?", (rs, rowNum) -> makeEvent(rs), userId);
+        return jdbcTemplate.query("SELECT * FROM events WHERE user_id = ?", (rs, rowNum) -> makeEvent(rs), userId);
     }
 
     private FeedEvent makeEvent(ResultSet rs) throws SQLException {
@@ -73,11 +73,11 @@ public class FeedDao {
         SqlRowSet rs;
         switch (feedEvent.getEventType()) {
             case ("LIKE"):
-                rs = jdbcTemplate.queryForRowSet("select * from FILMS where FILM_ID = ?",
+                rs = jdbcTemplate.queryForRowSet("SELECT * FROM films WHERE film_id = ?",
                         feedEvent.getEntityId());
                 return rs.next();
             case ("REVIEW"):
-                rs = jdbcTemplate.queryForRowSet("select * from REVIEWS where REVIEW_ID = ?",
+                rs = jdbcTemplate.queryForRowSet("SELECT * FROM reviews WHERE review_id = ?",
                         feedEvent.getEntityId());
                 return rs.next();
             default:

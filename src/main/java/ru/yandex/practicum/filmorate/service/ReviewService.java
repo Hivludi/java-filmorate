@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
@@ -8,14 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
     private final ReviewStorage reviewStorage;
     private final FeedService feedService;
-
-    public ReviewService(ReviewStorage reviewStorage, FeedService feedService) {
-        this.feedService = feedService;
-        this.reviewStorage = reviewStorage;
-    }
 
     public Optional<Review> create(Review review) {
         Optional<Review> reviewOptional = reviewStorage.create(review);
