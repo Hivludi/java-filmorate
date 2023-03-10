@@ -1,8 +1,8 @@
 # java-filmorate
-<img width="1000" src="Filmorate ERD v3.jpg">
+<img width="1424" src="Filmorate ERD.jpg" alt="ERD Diagram">
 
 ## Примеры запросов:
-### Получить конкретного пользователя
+### Получить пользователя по id
 ~~~
 SELECT *
 FROM user

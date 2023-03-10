@@ -1,10 +1,14 @@
 delete from FRIENDS_LIST;
+delete from FILM_DIRECTORS;
 delete from FILM_LIKES;
 delete from FILM_GENRES;
+delete from REVIEWS; -- порядок важен для соблюдения целостности таблиц
+delete from REVIEW_LIKES; -- порядок важен для соблюдения целостности таблиц
 delete from FILMS;
 delete from USERS;
 delete from GENRES;
 delete from MPA;
+delete from DIRECTORS;
 
 INSERT INTO MPA (NAME) VALUES ('G'), ('PG'), ('PG-13'), ('R'), ('NC-17');
 
@@ -29,4 +33,20 @@ VALUES ('default comedy 1', 'comedy 1', '1984-01-01', 91, 1),
 INSERT INTO FILM_GENRES (FILM_ID, GENRE_ID)
 VALUES (1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,1), (7,2), (7,3);
 INSERT INTO FILM_LIKES (FILM_ID, USER_ID)
-VALUES (1,1), (1,2), (1,3), (2,1), (2,2), (3,1), (4,1), (4,2), (4,3), (5,1), (5,2), (6,1), (7,1), (7,2), (7,3);*/
+VALUES (1,1), (1,2), (1,3), (2,1), (2,2), (3,1), (4,1), (4,2), (4,3), (5,1), (5,2), (6,1), (7,1), (7,2), (7,3);
+
+INSERT INTO REVIEWS (CONTENT, USER_ID, FILM_ID, IS_POSITIVE)
+VALUES ('Indian film, perfect', 1, 1, true),
+       ('Hollywood film in best practice, sad', 2, 2, true),
+       ('Author cinema, unclear', 3, 3, false),
+       ('Korean film, cruel', 1, 2, true),
+       ('Bollywood film in best practice, melodrama', 2, 3, true),
+       ('Horror cinema, blody', 3, 1, false);
+INSERT INTO REVIEW_LIKES (REVIEW_ID, USER_ID, IS_POSITIVE)
+VALUES (1, 2, true),
+       (2, 3, true),
+       (3, 3, false);
+*/
+
+
+
